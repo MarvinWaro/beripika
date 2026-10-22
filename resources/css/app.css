@@ -7,50 +7,77 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Beripika design system — two style presets (see docs/DESIGN.md)
+ *   default        IBM Carbon-inspired: square, IBM Plex, light display type, one assertive blue
+ *   .theme-coinbase Coinbase-inspired: pills, Inter, rounded cards, calm editorial type
+ * Every preset has light and dark (.dark) values. Pick one in Settings → Appearance.
+ */
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        var(--font-ui), ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+        Roboto, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-mono: var(--font-code), ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    --radius-lg: var(--radius);
-    --radius-md: calc(var(--radius) - 2px);
-    --radius-sm: calc(var(--radius) - 4px);
+    --radius-sm: var(--r-sm);
+    --radius-md: var(--r-md);
+    --radius-lg: var(--r-lg);
+    --radius-xl: var(--r-xl);
+    --radius-2xl: var(--r-2xl);
+    --radius-3xl: var(--r-3xl);
+
+    --color-blue-50: var(--blue-50);
+    --color-blue-100: var(--blue-100);
+    --color-blue-200: var(--blue-200);
+    --color-blue-300: var(--blue-300);
+    --color-blue-400: var(--blue-400);
+    --color-blue-500: var(--blue-500);
+    --color-blue-600: var(--blue-600);
+    --color-blue-700: var(--blue-700);
+    --color-blue-800: var(--blue-800);
+    --color-blue-900: var(--blue-900);
+    --color-blue-950: var(--blue-950);
+
+    --color-gray-50: var(--gray-50);
+    --color-gray-100: var(--gray-100);
+    --color-gray-200: var(--gray-200);
+    --color-gray-300: var(--gray-300);
+    --color-gray-400: var(--gray-400);
+    --color-gray-500: var(--gray-500);
+    --color-gray-600: var(--gray-600);
+    --color-gray-700: var(--gray-700);
+    --color-gray-800: var(--gray-800);
+    --color-gray-900: var(--gray-900);
+    --color-gray-950: var(--gray-950);
+
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-link: var(--link);
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
-
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
-
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
-
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
-
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
-
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
-
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
-
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
-
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
-
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -61,75 +88,246 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ───────────── IBM Carbon preset (default) ───────────── */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --font-ui: 'IBM Plex Sans';
+    --font-code: 'IBM Plex Mono';
+    --display-weight: 300;
+    --display-tracking: -0.01em;
+    --body-tracking: 0.01em;
+
+    /* Square geometry */
+    --r-sm: 0px;
+    --r-md: 0px;
+    --r-lg: 2px;
+    --r-xl: 2px;
+    --r-2xl: 2px;
+    --r-3xl: 2px;
+    --radius: 0px;
+    --radius-button: 0px;
+    --radius-field: 0px;
+    --radius-card: 0px;
+    --radius-popover: 0px;
+    --radius-nav: 0px;
+    --radius-hero: 0px;
+
+    /* IBM Blue / Carbon Gray scales */
+    --blue-50: #edf5ff;
+    --blue-100: #d0e2ff;
+    --blue-200: #a6c8ff;
+    --blue-300: #78a9ff;
+    --blue-400: #4589ff;
+    --blue-500: #2a73ff;
+    --blue-600: #0f62fe;
+    --blue-700: #0043ce;
+    --blue-800: #002d9c;
+    --blue-900: #001d6c;
+    --blue-950: #001141;
+    --gray-50: #f4f4f4;
+    --gray-100: #e8e8e8;
+    --gray-200: #e0e0e0;
+    --gray-300: #c6c6c6;
+    --gray-400: #a8a8a8;
+    --gray-500: #8d8d8d;
+    --gray-600: #6f6f6f;
+    --gray-700: #525252;
+    --gray-800: #393939;
+    --gray-900: #262626;
+    --gray-950: #161616;
+
+    --background: #ffffff;
+    --foreground: #161616;
+    --card: #ffffff;
+    --card-foreground: #161616;
+    --popover: #ffffff;
+    --popover-foreground: #161616;
+    --primary: #0f62fe;
+    --primary-foreground: #ffffff;
+    --secondary: #e0e0e0;
+    --secondary-foreground: #161616;
+    --muted: #f4f4f4;
+    --muted-foreground: #525252;
+    --accent: #e8e8e8;
+    --accent-foreground: #161616;
+    --destructive: #da1e28;
+    --destructive-foreground: #da1e28;
+    --success: #24a148;
+    --warning: #f1c21b;
+    --link: #0f62fe;
+    --border: #e0e0e0;
+    --input: #8d8d8d;
+    --ring: #0f62fe;
+    --chart-1: #0f62fe;
+    --chart-2: #24a148;
+    --chart-3: #8a3ffc;
+    --chart-4: #f1c21b;
+    --chart-5: #da1e28;
+    --sidebar: #f4f4f4;
+    --sidebar-foreground: #161616;
+    --sidebar-primary: #0f62fe;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e0e0e0;
+    --sidebar-accent-foreground: #161616;
+    --sidebar-border: #e0e0e0;
+    --sidebar-ring: #0f62fe;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --background: #161616;
+    --foreground: #f4f4f4;
+    --card: #262626;
+    --card-foreground: #f4f4f4;
+    --popover: #262626;
+    --popover-foreground: #f4f4f4;
+    --primary: #0f62fe;
+    --primary-foreground: #ffffff;
+    --secondary: #393939;
+    --secondary-foreground: #f4f4f4;
+    --muted: #262626;
+    --muted-foreground: #c6c6c6;
+    --accent: #393939;
+    --accent-foreground: #f4f4f4;
+    --destructive: #fa4d56;
+    --destructive-foreground: #ff8389;
+    --success: #42be65;
+    --warning: #f1c21b;
+    --link: #78a9ff;
+    --border: #393939;
+    --input: #6f6f6f;
+    --ring: #ffffff;
+    --chart-1: #4589ff;
+    --chart-2: #42be65;
+    --chart-3: #a56eff;
+    --chart-4: #f1c21b;
+    --chart-5: #fa4d56;
+    --sidebar: #1c1c1c;
+    --sidebar-foreground: #f4f4f4;
+    --sidebar-primary: #0f62fe;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #393939;
+    --sidebar-accent-foreground: #f4f4f4;
+    --sidebar-border: #393939;
+    --sidebar-ring: #ffffff;
+}
+
+/* ───────────── Coinbase preset ───────────── */
+.theme-coinbase {
+    --font-ui: 'Inter';
+    --font-code: 'JetBrains Mono';
+    --display-weight: 400;
+    --display-tracking: -0.03em;
+    --body-tracking: 0;
+
+    --r-sm: 8px;
+    --r-md: 10px;
+    --r-lg: 12px;
+    --r-xl: 12px;
+    --r-2xl: 16px;
+    --r-3xl: 24px;
+    --radius: 0.75rem;
+    --radius-button: 9999px;
+    --radius-field: 12px;
+    --radius-card: 16px;
+    --radius-popover: 12px;
+    --radius-nav: 9999px;
+    --radius-hero: 24px;
+
+    --blue-50: #eef4ff;
+    --blue-100: #dbe7ff;
+    --blue-200: #bcd2ff;
+    --blue-300: #8eb3ff;
+    --blue-400: #578bff;
+    --blue-500: #2a6aff;
+    --blue-600: #0052ff;
+    --blue-700: #003ecc;
+    --blue-800: #0033a6;
+    --blue-900: #002a80;
+    --blue-950: #001a52;
+    --gray-50: #f7f8f9;
+    --gray-100: #eef0f3;
+    --gray-200: #dee1e6;
+    --gray-300: #c5c9cf;
+    --gray-400: #a8acb3;
+    --gray-500: #7c828a;
+    --gray-600: #5b616e;
+    --gray-700: #3f444d;
+    --gray-800: #22252b;
+    --gray-900: #16181c;
+    --gray-950: #0a0b0d;
+
+    --background: #ffffff;
+    --foreground: #0a0b0d;
+    --card: #ffffff;
+    --card-foreground: #0a0b0d;
+    --popover: #ffffff;
+    --popover-foreground: #0a0b0d;
+    --primary: #0052ff;
+    --primary-foreground: #ffffff;
+    --secondary: #eef0f3;
+    --secondary-foreground: #0a0b0d;
+    --muted: #eef0f3;
+    --muted-foreground: #5b616e;
+    --accent: #f2f4f7;
+    --accent-foreground: #0a0b0d;
+    --destructive: #cf202f;
+    --destructive-foreground: #cf202f;
+    --success: #05b169;
+    --warning: #f4b000;
+    --link: #0052ff;
+    --border: #dee1e6;
+    --input: #dee1e6;
+    --ring: #0052ff;
+    --chart-1: #0052ff;
+    --chart-2: #05b169;
+    --chart-3: #f4b000;
+    --chart-4: #7c828a;
+    --chart-5: #cf202f;
+    --sidebar: #f7f8f9;
+    --sidebar-foreground: #0a0b0d;
+    --sidebar-primary: #0052ff;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #eef0f3;
+    --sidebar-accent-foreground: #0a0b0d;
+    --sidebar-border: #dee1e6;
+    --sidebar-ring: #0052ff;
+}
+
+.theme-coinbase.dark {
+    --background: #0a0b0d;
+    --foreground: #ffffff;
+    --card: #16181c;
+    --card-foreground: #ffffff;
+    --popover: #16181c;
+    --popover-foreground: #ffffff;
+    --primary: #2a6aff;
+    --primary-foreground: #ffffff;
+    --secondary: #22252b;
+    --secondary-foreground: #ffffff;
+    --muted: #1c1f24;
+    --muted-foreground: #a8acb3;
+    --accent: #22252b;
+    --accent-foreground: #ffffff;
+    --destructive: #e5484d;
+    --destructive-foreground: #ff6b6f;
+    --success: #2fd38a;
+    --warning: #ffc53d;
+    --link: #578bff;
+    --border: #2a2e35;
+    --input: #2a2e35;
+    --ring: #578bff;
+    --chart-1: #578bff;
+    --chart-2: #2fd38a;
+    --chart-3: #ffc53d;
+    --chart-4: #a8acb3;
+    --chart-5: #ff6b6f;
+    --sidebar: #0f1114;
+    --sidebar-foreground: #ffffff;
+    --sidebar-primary: #2a6aff;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #1c1f24;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #22252b;
+    --sidebar-ring: #578bff;
 }
 
 @layer base {
@@ -137,7 +335,215 @@
         @apply border-border;
     }
 
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
     body {
         @apply bg-background text-foreground;
+        letter-spacing: var(--body-tracking);
     }
+
+    .theme-coinbase body {
+        font-feature-settings: 'cv11', 'ss01';
+    }
+
+    ::selection {
+        background: color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+}
+
+@layer utilities {
+    /* Display headings: Carbon = light 300, Coinbase = regular 400 with tight tracking */
+    .text-display {
+        font-weight: var(--display-weight);
+        letter-spacing: var(--display-tracking);
+        line-height: 1.08;
+    }
+
+    /* Codes, SO numbers and counts */
+    .num {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+/* ───────────── Carbon component details ───────────── */
+html:not(.theme-coinbase) {
+    /* Fields: filled, bottom rule only, 2px focus outline */
+    & [data-slot='input'],
+    & [data-slot='select-trigger'],
+    & [data-slot='textarea'] {
+        background-color: var(--muted);
+        border-width: 0 0 1px 0;
+        border-color: var(--input);
+        box-shadow: none;
+    }
+
+    & [data-slot='input']:focus-visible,
+    & [data-slot='select-trigger']:focus-visible,
+    & [data-slot='textarea']:focus-visible,
+    & [data-slot='select-trigger'][data-state='open'] {
+        outline: 2px solid var(--ring);
+        outline-offset: -2px;
+        box-shadow: none;
+    }
+
+    /* Buttons: regular weight, left padding emphasis like Carbon */
+    & [data-slot='button'] {
+        font-weight: 400;
+        letter-spacing: 0.01em;
+    }
+
+    & [data-slot='button']:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: -2px;
+        box-shadow: inset 0 0 0 3px var(--background);
+    }
+
+    /* Tabs: underline style */
+    & [data-slot='tabs-list'] {
+        background: transparent;
+        border-bottom: 1px solid var(--border);
+        padding: 0;
+        gap: 0;
+        height: 2.75rem;
+    }
+
+    & [data-slot='tabs-trigger'] {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        padding: 0 1rem;
+        height: 100%;
+        color: var(--muted-foreground);
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+
+    & [data-slot='tabs-trigger'][data-state='active'] {
+        border-bottom-color: var(--primary);
+        color: var(--foreground);
+        font-weight: 600;
+    }
+
+    /* Side navigation: selected item gets a 3px blue rail */
+    & [data-sidebar='menu-button'][data-active='true'] {
+        background-color: var(--sidebar-accent);
+        color: var(--sidebar-foreground);
+        box-shadow: inset 3px 0 0 var(--primary);
+    }
+
+    /* Cards are flat tiles */
+    & [data-slot='card'] {
+        box-shadow: none;
+    }
+
+    /* Links on dark use the lighter IBM blue */
+    &.dark .text-primary {
+        color: var(--link);
+    }
+}
+
+/* ==== Custom Leaflet HEI pins ==== */
+
+/* Base container for all custom markers */
+.hei-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Main pin shape */
+.hei-pin {
+    width: 18px;
+    height: 18px;
+    position: relative;
+    border-radius: 50% 50% 50% 0;        /* circle with one sharp corner */
+    transform: rotate(-45deg);           /* sharp corner points down = pin tip */
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.9),
+        0 4px 8px rgba(15, 23, 42, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* white inner dot perfectly centered */
+.hei-pin::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 9999px;
+    background: #ffffff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* === Province colors === */
+
+/* Cotabato – emerald-500 */
+.hei-pin-cotabato {
+    background-color: #22c55e;
+}
+
+/* Sultan Kudarat – purple-500 */
+.hei-pin-sultan-kudarat {
+    background-color: #a855f7;
+}
+
+/* South Cotabato – blue-800 */
+.hei-pin-south-cotabato {
+    background-color: #1e40af;
+}
+
+/* Sarangani – red-500 */
+.hei-pin-sarangani {
+    background-color: #ef4444;
+}
+
+/* Other provinces / cities – gray-400 */
+.hei-pin-others {
+    background-color: #9ca3af;
+}
+
+/* CHED Regional Office XII – amber-500-ish */
+.hei-pin-ched {
+    background-color: #f59e0b;
+}
+
+/* Toasts: flat surface with a coloured status edge */
+[data-sonner-toast] {
+    border-radius: var(--radius-card) !important;
+    border: 1px solid var(--border) !important;
+    background: var(--popover) !important;
+    color: var(--popover-foreground) !important;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.14) !important;
+}
+
+[data-sonner-toast][data-type='success'] {
+    border-left: 4px solid var(--success) !important;
+}
+
+[data-sonner-toast][data-type='error'] {
+    border-left: 4px solid var(--destructive) !important;
+}
+
+[data-sonner-toast][data-type='warning'] {
+    border-left: 4px solid var(--warning) !important;
+}
+
+[data-sonner-toast][data-type='info'] {
+    border-left: 4px solid var(--primary) !important;
+}
+
+.leaflet-container {
+    font-family: var(--font-sans);
+}
+
+.theme-coinbase .leaflet-bar a {
+    border-radius: 9999px !important;
 }

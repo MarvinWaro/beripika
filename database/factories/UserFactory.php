@@ -2,8 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
+use App\Support\DefaultRoles;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -33,7 +36,30 @@ class UserFactory extends Factory
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
+            'is_active' => true,
         ];
+    }
+
+    /** Give the user one of the default roles (runs `rbac:sync` on first use). */
+    public function withRole(string $role): static
+    {
+        return $this->state(function () use ($role) {
+            if (! Role::where('name', $role)->exists()) {
+                Artisan::call('rbac:sync');
+            }
+
+            return ['role_id' => Role::where('name', $role)->value('id')];
+        });
+    }
+
+    public function superAdmin(): static
+    {
+        return $this->withRole(DefaultRoles::SUPER_ADMIN);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn () => ['is_active' => false]);
     }
 
     /**

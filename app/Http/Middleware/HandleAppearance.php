@@ -17,6 +17,7 @@ class HandleAppearance
     public function handle(Request $request, Closure $next): Response
     {
         View::share('appearance', $request->cookie('appearance') ?? 'system');
+        View::share('uiStyle', $request->cookie('ui_style') === 'coinbase' ? 'coinbase' : 'carbon');
 
         return $next($request);
     }
