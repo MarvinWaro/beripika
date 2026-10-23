@@ -1,7 +1,17 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import {
+    Building2,
+    FileText,
+    GraduationCap,
+    History,
+    Import,
+    LayoutGrid,
+    ListChecks,
+    MessageSquareWarning,
+    ShieldCheck,
+    Users,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -13,31 +23,46 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { usePermissions } from '@/hooks/use-permissions';
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavItem, Permission } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
+type GuardedNavItem = NavItem & { permission: Permission };
 
-const footerNavItems: NavItem[] = [
+const navGroups: { title: string; items: GuardedNavItem[] }[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
+        title: 'Overview',
+        items: [
+            { title: 'Dashboard', href: dashboard(), icon: LayoutGrid, permission: 'view_dashboard' },
+        ],
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Records',
+        items: [
+            { title: 'Institutions', href: '/institutions', icon: Building2, permission: 'view_institutions' },
+            { title: 'Programs', href: '/programs', icon: FileText, permission: 'view_programs' },
+            { title: 'Program Catalog', href: '/programs/catalog', icon: ListChecks, permission: 'view_programs' },
+            { title: 'Graduates', href: '/graduates', icon: GraduationCap, permission: 'view_graduates' },
+        ],
+    },
+    {
+        title: 'Administration',
+        items: [
+            { title: 'Import', href: '/import', icon: Import, permission: 'view_imports' },
+            { title: 'Concerns', href: '/concerns', icon: MessageSquareWarning, permission: 'view_concerns' },
+            { title: 'Users', href: '/users', icon: Users, permission: 'view_users' },
+            { title: 'Roles & Permissions', href: '/roles', icon: ShieldCheck, permission: 'manage_roles' },
+            { title: 'Activity Logs', href: '/logs', icon: History, permission: 'view_activity_logs' },
+        ],
     },
 ];
 
 export function AppSidebar() {
+    const { can } = usePermissions();
+    const groups = navGroups
+        .map((group) => ({ ...group, items: group.items.filter((item) => can(item.permission)) }))
+        .filter((group) => group.items.length > 0);
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -53,11 +78,12 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                {groups.map((group) => (
+                    <NavMain key={group.title} title={group.title} items={group.items} />
+                ))}
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

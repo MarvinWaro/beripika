@@ -144,7 +144,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Features::registration(), // accounts are created by administrators
         Features::resetPasswords(),
         Features::twoFactorAuthentication([
             'confirm' => true,

@@ -64,6 +64,22 @@ return [
             ]) : [],
         ],
 
+        // Old "verifier" database — only used by `php artisan beripika:import-legacy`.
+        'legacy' => [
+            'driver' => env('LEGACY_DB_DRIVER', 'mysql'),
+            'host' => env('LEGACY_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('LEGACY_DB_PORT', env('DB_PORT', '3306')),
+            'database' => env('LEGACY_DB_DATABASE', 'verifier'),
+            'username' => env('LEGACY_DB_USERNAME', env('DB_USERNAME', 'root')),
+            'password' => env('LEGACY_DB_PASSWORD', env('DB_PASSWORD', '')),
+            'unix_socket' => env('LEGACY_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
