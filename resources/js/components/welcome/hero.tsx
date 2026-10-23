@@ -12,7 +12,7 @@ export default function WelcomeHero({
                 <div className="mb-3 flex items-center gap-3">
                     <div className="rounded-full bg-white/70 p-2 shadow dark:bg-gray-900/70">
                         <img
-                            src="/assets/img/ched-logo.png"
+                            src="/assets/img/web/ched.png"
                             alt="CHED Logo"
                             className="h-14 w-14 object-contain"
                         />

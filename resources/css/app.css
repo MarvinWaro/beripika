@@ -446,7 +446,7 @@ html:not(.theme-coinbase) {
     }
 }
 
-/* ==== Custom Leaflet HEI pins ==== */
+/* ==== HEI map pins (CHED office marker) ==== */
 
 /* Base container for all custom markers */
 .hei-marker {
@@ -540,10 +540,186 @@ html:not(.theme-coinbase) {
     border-left: 4px solid var(--primary) !important;
 }
 
-.leaflet-container {
+/* ───────────── MapLibre map (HEI map) ───────────── */
+.maplibregl-map {
     font-family: var(--font-sans);
 }
 
-.theme-coinbase .leaflet-bar a {
-    border-radius: 9999px !important;
+.maplibregl-popup-content {
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.18);
+    color: #161616;
+}
+
+.maplibregl-popup-close-button {
+    font-size: 18px;
+    padding: 0 6px;
+    color: #6f6f6f;
+}
+
+.maplibregl-ctrl-group {
+    border-radius: var(--radius-field) !important;
+    overflow: hidden;
+}
+
+.theme-coinbase .maplibregl-ctrl-group {
+    border-radius: 12px !important;
+}
+
+.dark .maplibregl-ctrl-group {
+    background: #262626;
+}
+
+.dark .maplibregl-ctrl-group button + button {
+    border-top-color: #393939;
+}
+
+.dark .maplibregl-ctrl-icon {
+    filter: invert(1);
+}
+
+.dark .maplibregl-ctrl-attrib {
+    background: rgb(22 22 22 / 0.8);
+    color: #c6c6c6;
+}
+
+.dark .maplibregl-ctrl-attrib a {
+    color: #c6c6c6;
+}
+
+/* ───────── Landing page motion (welcome page only) ───────── */
+.landing-topo {
+    color: color-mix(in srgb, var(--primary) 55%, white);
+    contain: strict;
+}
+
+/* Static edge fade drawn above the moving layer (cheaper than an animated mask). */
+.landing-topo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 75% at 60% 40%, transparent 35%, var(--color-gray-950) 82%);
+}
+
+.landing-topo-layer {
+    opacity: 0.22;
+    animation: landing-drift 48s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes landing-drift {
+    from {
+        transform: translate3d(-8%, -8%, 0);
+    }
+    to {
+        transform: translate3d(-3%, -11%, 0);
+    }
+}
+
+.landing-rise {
+    animation: landing-rise 0.75s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes landing-rise {
+    from {
+        transform: translate3d(0, 105%, 0);
+        opacity: 0;
+    }
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+.landing-float {
+    animation:
+        landing-in 0.6s 0.7s ease-out both,
+        landing-float 6s ease-in-out infinite;
+}
+
+@keyframes landing-float {
+    0%,
+    100% {
+        translate: 0 0;
+    }
+    50% {
+        translate: 0 -7px;
+    }
+}
+
+@keyframes landing-in {
+    from {
+        opacity: 0;
+        scale: 0.94;
+    }
+}
+
+.landing-reveal {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition:
+        opacity 0.7s ease-out,
+        transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.landing-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+.landing-topo-layer.is-still {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-topo-layer,
+    .landing-rise,
+    .landing-float {
+        animation: none !important;
+    }
+
+    .landing-reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ───────── Page transitions (landing ↔ sign-in, View Transitions API) ───────── */
+/* Shared elements: the CHED seal glides and the dark band morphs into the brand panel. */
+.vt-brand-seal {
+    view-transition-name: brand-seal;
+}
+
+.vt-brand-panel {
+    view-transition-name: brand-panel;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 260ms;
+    animation-timing-function: ease-out;
+}
+
+::view-transition-group(brand-panel),
+::view-transition-group(brand-seal) {
+    animation-duration: 380ms;
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Keep the panel's contents from stretching while it resizes. */
+::view-transition-old(brand-panel),
+::view-transition-new(brand-panel) {
+    height: 100%;
+    object-fit: cover;
+    overflow: clip;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
 }

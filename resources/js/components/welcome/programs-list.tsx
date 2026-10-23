@@ -236,15 +236,16 @@ export default function ProgramsList({
                                                 </p>
                                             )}
 
-                                            <div className="flex flex-wrap items-center gap-2">
+                                            <div className="flex min-w-0 flex-wrap items-center gap-2">
                                                 {/* Public (COP) */}
                                                 {program.copNumber && (
                                                     <Badge
                                                         variant="outline"
-                                                        className={`px-2 py-0.5 text-[11px] ${getPermitStyle(hasPdf)}`}
+                                                        title={program.copNumber}
+                                                        className={`h-auto max-w-full items-start justify-start overflow-visible whitespace-normal px-2 py-1 text-left text-[11px] leading-snug ${(program.copNumber?.length ?? 0) > 24 ? 'rounded-md' : ''} ${getPermitStyle(hasPdf)}`}
                                                     >
-                                                        <span className="font-medium">No:</span>
-                                                        <span className="ml-1 font-mono text-sm ">{program.copNumber}</span>
+                                                        <span className="shrink-0 font-medium">No:</span>
+                                                        <span className="ml-1 min-w-0 font-mono text-sm break-words [overflow-wrap:anywhere]">{program.copNumber}</span>
                                                     </Badge>
                                                 )}
 
@@ -252,10 +253,11 @@ export default function ProgramsList({
                                                 {program.grNumber && (
                                                     <Badge
                                                         variant="outline"
-                                                        className={`px-2 py-0.5 text-[11px] ${getPermitStyle(hasPdf)}`}
+                                                        title={program.grNumber}
+                                                        className={`h-auto max-w-full items-start justify-start overflow-visible whitespace-normal px-2 py-1 text-left text-[11px] leading-snug ${(program.grNumber?.length ?? 0) > 24 ? 'rounded-md' : ''} ${getPermitStyle(hasPdf)}`}
                                                     >
-                                                        <span className="font-medium">No:</span>
-                                                        <span className="ml-1 font-mono text-sm">{program.grNumber}</span>
+                                                        <span className="shrink-0 font-medium">No:</span>
+                                                        <span className="ml-1 min-w-0 font-mono text-sm break-words [overflow-wrap:anywhere]">{program.grNumber}</span>
                                                     </Badge>
                                                 )}
 

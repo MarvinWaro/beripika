@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import InstitutionResultsList from '@/components/welcome/institution-results-list';
 import ProgramsList from '@/components/welcome/programs-list';
-import WelcomeLeaflet from '@/components/welcome/leaflet';
+import { CountUp, FloatingChips, Reveal, RevealHeadline, TopoBackground } from '@/components/welcome/landing-motion';
 import SearchInstitutionCard from '@/components/welcome/search-institution-card';
 import PermitDialog from '@/components/welcome/permit-dialog';
 import Footer from '@/components/footer';
@@ -14,7 +14,10 @@ import WelcomeNav from '@/components/welcome/welcome-nav';
 import { Toaster } from '@/components/ui/sonner';
 import axios from 'axios';
 import { Sun, Moon, Monitor } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+
+// The map library is large, so it loads only when the welcome page renders.
+const HeiMap = lazy(() => import('@/components/welcome/hei-map'));
 import { toast } from 'sonner';
 
 // --- Types ---
@@ -413,42 +416,49 @@ export default function PRCCheckLanding() {
             />
 
             {/* Hero: dark editorial band with the search card */}
-            <section className="relative overflow-hidden border-b border-white/10 bg-gray-950 text-white">
+            <section className="vt-brand-panel relative overflow-hidden border-b border-white/10 bg-gray-950 text-white">
                 <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_srgb,var(--primary)_40%,transparent),transparent_55%)]"
                 />
+                <TopoBackground />
                 <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-24">
                     <div className="lg:col-span-7">
                         <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-gray-200">
                             <span className="size-1.5 rounded-full bg-success" />
                             Official CHED Region XII registry
                         </span>
-                        <h1 className="text-display mt-6 text-5xl sm:text-6xl lg:text-7xl">
-                            Verify programs, permits and institutions.
-                        </h1>
-                        <p className="mt-6 max-w-xl text-lg leading-relaxed text-gray-400">
+                        <RevealHeadline
+                            className="text-display mt-6 text-5xl sm:text-6xl lg:text-7xl"
+                            lines={['Verify programs,', 'permits and', 'institutions.']}
+                        />
+                        <p className="landing-rise mt-6 max-w-xl text-lg leading-relaxed text-gray-400" style={{ animationDelay: '480ms' }}>
                             Check whether a higher education institution and its
                             programs hold a valid CHED permit or recognition,
                             straight from the CHED Regional Office XII portal.
                         </p>
-                        <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-white/10 pt-6 text-sm">
+                        <dl className="landing-rise mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-white/10 pt-6 text-sm" style={{ animationDelay: '600ms' }}>
                             <div>
-                                <dt className="text-gray-400">Source</dt>
-                                <dd className="mt-1 font-semibold">CHED portal</dd>
+                                <dt className="text-gray-400">HEIs on the map</dt>
+                                <dd className="mt-1 text-2xl font-semibold">
+                                    <CountUp value={heiLocations.length > 0 ? heiLocations.length : null} />
+                                </dd>
                             </div>
                             <div>
-                                <dt className="text-gray-400">Coverage</dt>
-                                <dd className="mt-1 font-semibold">Region XII</dd>
+                                <dt className="text-gray-400">Provinces covered</dt>
+                                <dd className="mt-1 text-2xl font-semibold">
+                                    <CountUp value={4} />
+                                </dd>
                             </div>
                             <div>
                                 <dt className="text-gray-400">Access</dt>
-                                <dd className="mt-1 font-semibold">Free · Public</dd>
+                                <dd className="mt-1 text-2xl font-semibold">Free</dd>
                             </div>
                         </dl>
                     </div>
 
-                    <div className="lg:col-span-5">
+                    <div className="landing-rise relative lg:col-span-5" style={{ animationDelay: '250ms' }}>
+                        <FloatingChips />
                         <SearchInstitutionCard
                             searchTerm={searchTerm}
                             onSearchTermChange={handleSearchTermChange}
@@ -474,6 +484,7 @@ export default function PRCCheckLanding() {
                 </div> */}
 
                 {/* HEI map */}
+                <Reveal>
                 <section aria-labelledby="hei-map-title" className="mt-4">
                     <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                         <div>
@@ -482,7 +493,7 @@ export default function PRCCheckLanding() {
                             </p>
                             <h2
                                 id="hei-map-title"
-                                className="text-display mt-1 text-3xl sm:text-4xl"
+                                className="text-display mt-1 scroll-mt-24 text-3xl sm:text-4xl"
                             >
                                 Institutions across Region XII
                             </h2>
@@ -493,18 +504,27 @@ export default function PRCCheckLanding() {
                         </p>
                     </div>
                     <div className="overflow-hidden rounded-(--radius-hero) border bg-muted">
-                        <WelcomeLeaflet
-                            center={heiMapCenter}
-                            zoom={heiMapZoom}
-                            heis={heiLocations}
-                            isLoading={heiMapLoading}
-                            error={heiMapError}
-                            onHeiClick={handleHeiMarkerClick}
-                            focusLocation={mapFocusLocation}
-                            fitLocations={mapFitLocations}
-                        />
+                        <Suspense
+                            fallback={
+                                <div className="grid h-[380px] place-items-center text-sm text-muted-foreground sm:h-[460px] lg:h-[560px]">
+                                    Loading map…
+                                </div>
+                            }
+                        >
+                            <HeiMap
+                                center={heiMapCenter}
+                                zoom={heiMapZoom}
+                                heis={heiLocations}
+                                isLoading={heiMapLoading}
+                                error={heiMapError}
+                                onHeiClick={handleHeiMarkerClick}
+                                focusLocation={mapFocusLocation}
+                                fitLocations={mapFitLocations}
+                            />
+                        </Suspense>
                     </div>
                 </section>
+                </Reveal>
 
                 {/* Loading Skeleton */}
                 {isSearching && institutions.length === 0 && (

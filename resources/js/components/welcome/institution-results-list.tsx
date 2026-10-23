@@ -58,7 +58,7 @@ export default function InstitutionResultsList({
                             key={`${institution.code}-${keyIndex}`}
                             className={`py-0 group border border-dashed shadow-sm transition-all hover:shadow-md ${
                                 isSelected
-                                    ? 'border-emerald-300 bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950/70'
+                                    ? 'border-emerald-300 bg-emerald-100 dark:border-emerald-600 dark:bg-emerald-900/40'
                                     : 'bg-white/95 border-gray-200 dark:bg-gray-900/90 dark:border-gray-700'
                             }`}
                         >
@@ -78,7 +78,7 @@ export default function InstitutionResultsList({
                                             <h3
                                                 className={`text-sm font-semibold leading-snug break-words ${
                                                     isSelected
-                                                        ? 'text-gray-900'
+                                                        ? 'text-gray-900 dark:text-emerald-50'
                                                         : 'text-gray-900 dark:text-white'
                                                 }`}
                                             >
@@ -110,7 +110,7 @@ export default function InstitutionResultsList({
                                             {/* Helper text section: Only rendered if loading */}
                                             {helperText && (
                                                 <div className={`mt-1 flex items-center gap-1 text-[11px] ${
-                                                    isSelected ? 'text-gray-700' : 'text-gray-500 dark:text-gray-400'
+                                                    isSelected ? 'text-gray-700 dark:text-emerald-200/80' : 'text-gray-500 dark:text-gray-400'
                                                 }`}>
                                                     <svg
                                                         className="h-3 w-3 flex-shrink-0 animate-spin"
@@ -133,7 +133,7 @@ export default function InstitutionResultsList({
 
                                     <ChevronDown
                                         className={`h-4 w-4 flex-shrink-0 transition-transform ${
-                                            isSelected ? 'rotate-180 text-gray-600' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500'
+                                            isSelected ? 'rotate-180 text-gray-600 dark:text-emerald-200' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500'
                                         }`}
                                     />
                                 </button>

@@ -105,6 +105,6 @@ export default function Login({ status, canResetPassword }: Props) {
 }
 
 Login.layout = {
-    title: 'Log in to your account',
-    description: 'Enter your email and password below to log in',
+    title: 'Sign in to Beripika',
+    description: 'Use the account issued to you by CHED Regional Office XII.',
 };

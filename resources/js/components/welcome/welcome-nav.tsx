@@ -1,7 +1,9 @@
 // resources/js/components/welcome/welcome-nav.tsx
 
+import { Link } from '@inertiajs/react';
 import { LogIn } from 'lucide-react';
 import React from 'react';
+import { login } from '@/routes';
 import {
     Tooltip,
     TooltipContent,
@@ -25,9 +27,9 @@ const WelcomeNav: React.FC<WelcomeNavProps> = ({
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <a href="/" className="flex min-w-0 items-center gap-3">
                     <img
-                        src="/assets/img/ched-logo.png"
+                        src="/assets/img/web/ched.png"
                         alt="CHED logo"
-                        className="h-9 w-9 shrink-0 rounded-full bg-white object-contain p-0.5"
+                        className="vt-brand-seal size-10 shrink-0 object-contain"
                     />
                     <div className="min-w-0 leading-tight">
                         <div className="text-[15px] font-semibold tracking-tight">
@@ -58,13 +60,14 @@ const WelcomeNav: React.FC<WelcomeNavProps> = ({
                         </Tooltip>
                     </TooltipProvider>
 
-                    <a
-                        href="/login"
+                    <Link
+                        href={login()}
+                        viewTransition
                         className="inline-flex h-10 shrink-0 items-center gap-2 rounded-(--radius-button) bg-primary px-5 text-sm font-semibold text-white transition hover:bg-blue-500"
                     >
                         <LogIn className="h-4 w-4" />
                         Sign in
-                    </a>
+                    </Link>
                 </div>
             </div>
         </header>

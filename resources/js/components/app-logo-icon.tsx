@@ -4,7 +4,7 @@ export default function AppLogoIcon(props: ImgHTMLAttributes<HTMLImageElement>) 
     return (
         <img
             {...props}
-            src="/assets/img/ched-logo.png"
+            src="/assets/img/web/ched.png"
             alt="CHED Logo"
         />
     );
