@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Permission;
 use App\Models\Graduate;
 use App\Services\DashboardAnalytics;
+use App\Services\DashboardOperations;
 use App\Services\GraduateLookupLog;
 use App\Services\PortalService;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request, PortalService $portalService, DashboardAnalytics $analytics)
+    public function index(Request $request, PortalService $portalService, DashboardAnalytics $analytics, DashboardOperations $operations)
     {
         if (! $request->user()->hasPermission(Permission::VIEW_DASHBOARD)) {
             $fallback = collect([
@@ -41,6 +42,7 @@ class DashboardController extends Controller
         $snapshot = $portalService->schoolSnapshot();
 
         return Inertia::render('dashboard', $analytics->summarize($year, $institution, $snapshot['data']) + [
+            'operations' => $operations->summarize($request->user()),
             'filters' => ['year' => $year, 'institution' => $institution],
             'portal' => [
                 'count' => $snapshot['last_fetched_at'] ? count($snapshot['data']) : null,
