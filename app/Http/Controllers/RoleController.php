@@ -34,7 +34,7 @@ class RoleController extends Controller
                     : $role->permissions->pluck('name')->all(),
             ]);
 
-        return Inertia::render('roles/index', [
+        return Inertia::render('settings/roles', [
             'roles' => $roles,
             'permissionGroups' => $this->permissionGroups(),
         ]);

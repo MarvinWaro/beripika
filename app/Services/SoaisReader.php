@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
@@ -124,7 +125,7 @@ class SoaisReader
         }
         $sex = match (strtoupper($value(9))) {
             'M', 'MALE' => 'MALE', 'F', 'FEMALE' => 'FEMALE', '' => null,
-            default => throw new RuntimeException('Sex must be Male or Female, or blank.')
+            default => throw new RuntimeException(sprintf('Sex must be Male or Female, or blank (found "%s").', Str::limit($value(9), 30)))
         };
         $data = ['hei_uii' => $value(3), 'so_number' => $value(4), 'last_name' => $value(5), 'first_name' => $value(6),
             'middle_name' => $value(7) ?: null, 'extension_name' => $value(8) ?: null, 'sex' => $sex,

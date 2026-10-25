@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use DateTimeImmutable;
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use RuntimeException;
 
@@ -47,7 +48,9 @@ class GraduateData
                 return $date->format('Y-m-d');
             }
         }
-        throw new RuntimeException('Missing or invalid graduation date. Use an Excel date or YYYY/MM/DD.');
+        throw new RuntimeException($text === ''
+            ? 'Missing or invalid graduation date. Use an Excel date or YYYY/MM/DD.'
+            : sprintf('Missing or invalid graduation date (found "%s"). Use an Excel date or YYYY/MM/DD.', Str::limit($text, 30)));
     }
 
     public static function indexes(array $data): array

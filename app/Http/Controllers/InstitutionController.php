@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Graduate;
 use App\Services\GraduateData;
+use App\Services\GraduateLookupLog;
 use App\Services\PortalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -97,7 +98,7 @@ class InstitutionController extends Controller
     /**
      * Fetch graduates for a specific program modal
      */
-    public function programGraduates(Request $request, string $instCode): JsonResponse
+    public function programGraduates(Request $request, string $instCode, GraduateLookupLog $lookups): JsonResponse
     {
         $validated = $request->validate([
             'program_name' => ['required', 'string', 'max:1000'],
@@ -119,6 +120,9 @@ class InstitutionController extends Controller
                 'id' => $grad->id, 'first_name' => $grad->first_name, 'last_name' => $grad->last_name,
                 'middle_name' => $grad->middle_name, 'so_number' => $grad->so_number, 'year_graduated' => $grad->date_graduated,
             ]);
+
+        $lookups->programList($request->user(), $instCode, $validated['program_name'], $validated['major'] ?? null,
+            isset($validated['year']) ? (int) $validated['year'] : null, $graduates->currentPage(), $graduates->total());
 
         return response()->json(array_merge($graduates->toArray(), ['years' => $years]));
     }

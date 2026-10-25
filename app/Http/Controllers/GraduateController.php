@@ -7,8 +7,11 @@ use App\Models\Graduate;
 use App\Models\GraduateImport;
 use App\Models\ProgramCatalog;
 use App\Services\GraduateData;
+use App\Services\GraduateLookupLog;
 use App\Services\PortalService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -16,16 +19,29 @@ class GraduateController extends Controller
 {
     /**
      * List graduates (Inertia page) with:
-     *  - server-side search (q)
+     *  - server-side search (q) and filters (institution, program, year graduated, sex)
      *  - pagination (25 per page)
      *  - HEI metadata from CHED portal (via PortalService)
      *  - program type from program_catalogs
      */
-    public function index(Request $request, PortalService $portalService)
+    public function index(Request $request, PortalService $portalService, GraduateLookupLog $lookups)
     {
         $this->authorize('viewAny', Graduate::class);
 
-        $q = trim((string) $request->query('q', ''));
+        $validated = $request->validate([
+            'q' => ['nullable', 'string', 'max:255'],
+            'hei' => ['nullable', 'string', 'max:32'],
+            'program' => ['nullable', 'string', 'max:500'],
+            'year' => ['nullable', 'integer', 'between:1900,2200'],
+            'sex' => ['nullable', Rule::in(['MALE', 'FEMALE'])],
+        ]);
+        $q = trim((string) ($validated['q'] ?? ''));
+        $filters = [
+            'hei' => $validated['hei'] ?? null,
+            'program' => $validated['program'] ?? null,
+            'year' => isset($validated['year']) ? (int) $validated['year'] : null,
+            'sex' => $validated['sex'] ?? null,
+        ];
 
         // Get all HEIs from the Portal once (cached)
         $heiFromPortal = collect($portalService->fetchAllHEI())->keyBy('instCode');
@@ -35,6 +51,7 @@ class GraduateController extends Controller
         $query = Graduate::with(['program.institution', 'institution']);
 
         if ($q !== '') {
+            // One group, so the filters below are ANDed with the whole search instead of only its last OR.
             $query->where(function ($sub) use ($q, $matchingHeis) {
                 $sub->where('last_name', 'like', "%{$q}%")
                     ->orWhere('first_name', 'like', "%{$q}%")
@@ -46,17 +63,22 @@ class GraduateController extends Controller
                     ->orWhere('graduates.major', 'like', "%{$q}%")
                     ->orWhere('psced_code', 'like', "%{$q}%")
                     ->orWhere('date_graduated', 'like', "%{$q}%")
-                    ->orWhereIn('hei_uii', $matchingHeis);
-            })
-                ->orWhereHas('program', function ($sub) use ($q) {
-                    $sub->where('program_name', 'like', "%{$q}%")
-                        ->orWhere('major', 'like', "%{$q}%");
-                })
-                ->orWhereHas('program.institution', function ($sub) use ($q) {
-                    $sub->where('name', 'like', "%{$q}%")
-                        ->orWhere('institution_code', 'like', "%{$q}%");
-                });
+                    ->orWhereIn('hei_uii', $matchingHeis)
+                    ->orWhereHas('program', function ($program) use ($q) {
+                        $program->where('program_name', 'like', "%{$q}%")
+                            ->orWhere('major', 'like', "%{$q}%");
+                    })
+                    ->orWhereHas('program.institution', function ($institution) use ($q) {
+                        $institution->where('name', 'like', "%{$q}%")
+                            ->orWhere('institution_code', 'like', "%{$q}%");
+                    });
+            });
         }
+
+        $query->when($filters['hei'], fn ($sub, $hei) => $sub->where('hei_uii', $hei))
+            ->when($filters['program'], fn ($sub, $program) => $sub->where('program_key', GraduateData::nameKey($program)))
+            ->when($filters['year'], fn ($sub, $year) => $sub->where('graduation_year', $year))
+            ->when($filters['sex'], fn ($sub, $sex) => $sub->where('sex', $sex));
 
         $graduates = $query
             ->orderBy('last_name')
@@ -127,12 +149,34 @@ class GraduateController extends Controller
                 ];
             });
 
+        $lookups->listSearch($request->user(), $q !== '' ? $q : null, $graduates->currentPage(), $graduates->total(), $filters);
+
         return Inertia::render('graduates/index', [
             'graduates' => $graduates,
-            'filters' => [
-                'q' => $q !== '' ? $q : null,
-            ],
+            'filters' => ['q' => $q !== '' ? $q : null] + $filters,
+            'filterOptions' => $this->filterOptions($filters['hei'], $heiFromPortal),
         ]);
+    }
+
+    /**
+     * Choices for the filter bar, taken from the graduates that exist (indexed columns, small result sets).
+     * Programs are scoped to the selected institution so the list stays relevant.
+     *
+     * @param  Collection<string, array<string, mixed>>  $heiFromPortal
+     * @return array{institutions: list<array{value: string, label: string}>, programs: list<string>, years: list<int>}
+     */
+    private function filterOptions(?string $hei, Collection $heiFromPortal): array
+    {
+        return [
+            'institutions' => array_values(Graduate::query()->whereNotNull('hei_uii')->distinct()->pluck('hei_uii')
+                ->map(fn (string $code) => ['value' => $code, 'label' => $code.' — '.($heiFromPortal->get($code)['instName'] ?? 'Unknown institution')])
+                ->sortBy('label')->all()),
+            'programs' => array_values(Graduate::query()->when($hei, fn ($query) => $query->where('hei_uii', $hei))
+                ->selectRaw('MIN(program_name) AS program_name')->groupBy('program_key')
+                ->orderBy('program_name')->pluck('program_name')->filter(fn ($name) => is_string($name))->all()),
+            'years' => array_values(Graduate::query()->whereNotNull('graduation_year')->distinct()
+                ->orderByDesc('graduation_year')->pluck('graduation_year')->map(fn ($year) => (int) $year)->all()),
+        ];
     }
 
     /**

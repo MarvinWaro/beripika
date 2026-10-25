@@ -47,17 +47,18 @@ class GraduateImportController extends Controller
     {
         $request->validate(['page' => 'sometimes|integer|min:1']);
 
+        // 'error' sorts before 'warning': rows that were not imported come first.
         return response()->json(DB::table('graduate_import_issues')->where('graduate_import_id', $run->id)
-            ->orderBy('row_number')->orderBy('id')->paginate(25, ['id', 'row_number', 'severity', 'message']));
+            ->orderBy('severity')->orderBy('row_number')->orderBy('id')->paginate(25, ['id', 'row_number', 'list_number', 'severity', 'message']));
     }
 
     public function issues(GraduateImport $run)
     {
         return response()->streamDownload(function () use ($run) {
             $stream = fopen('php://output', 'w');
-            fputcsv($stream, ['Excel row', 'Severity', 'Issue']);
+            fputcsv($stream, ['No.', 'Excel row', 'Severity', 'Issue']);
             foreach (DB::table('graduate_import_issues')->where('graduate_import_id', $run->id)->orderBy('row_number')->cursor() as $issue) {
-                fputcsv($stream, [$issue->row_number, $issue->severity, $issue->message]);
+                fputcsv($stream, [$issue->list_number, $issue->row_number, $issue->severity, $issue->message]);
             }
             fclose($stream);
         }, 'import-'.$run->id.'-issues.csv', ['Content-Type' => 'text/csv', 'Cache-Control' => 'private, no-store']);

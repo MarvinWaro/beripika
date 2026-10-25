@@ -188,7 +188,7 @@ export default function UsersIndex({ users, roles, filters }: Props) {
         <>
             <Head title="Users" />
 
-            <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+            <div className="flex flex-1 flex-col gap-6">
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>

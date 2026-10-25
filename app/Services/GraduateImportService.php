@@ -94,6 +94,7 @@ class GraduateImportService
         $skipped = 0;
         $invalid = 0;
         foreach ($rows as $number => $row) {
+            $listNumber = mb_substr(trim((string) ($row[0] ?? '')), 0, 20) ?: null;
             try {
                 $data = $reader->normalize($row);
                 if (! $data) {
@@ -103,10 +104,10 @@ class GraduateImportService
                 }
                 $json = json_encode($data, JSON_THROW_ON_ERROR);
                 $staged[] = ['graduate_import_id' => $run->id, 'graduate_import_chunk_id' => $chunk->id, 'row_number' => $number,
-                    'identity_key' => $data['identity_key'], 'fingerprint' => hash('sha256', $json), 'data' => $json];
+                    'list_number' => $listNumber, 'identity_key' => $data['identity_key'], 'fingerprint' => hash('sha256', $json), 'data' => $json];
             } catch (\RuntimeException $exception) {
                 $invalid++;
-                $issues[] = $this->issue($run->id, $number, 'error', $exception->getMessage());
+                $issues[] = $this->issue($run->id, $number, 'error', $exception->getMessage(), $listNumber);
             }
         }
         DB::transaction(function () use ($chunk, $staged, $issues, $skipped, $invalid) {
@@ -146,7 +147,7 @@ class GraduateImportService
                 $group = $groups[$row->identity_key];
                 if ($group->first_hash !== $group->last_hash) {
                     $counts['invalid']++;
-                    $issues[] = $this->issue($run->id, $row->row_number, 'error', 'Conflicting rows share this HEI + SO number. None of these rows was applied.');
+                    $issues[] = $this->issue($run->id, $row->row_number, 'error', 'Conflicting rows share this HEI + SO number. None of these rows was applied.', $row->list_number);
 
                     continue;
                 }
@@ -160,8 +161,9 @@ class GraduateImportService
                 $matches = $programs->get(($institution?->id ?? '').'|'.$data['program_key'].'|'.$data['major_key'], collect());
                 $data['institution_id'] = $institution?->id;
                 $data['program_id'] = $matches->count() === 1 ? $matches->first()->id : null;
-                if (! $data['program_id']) {
-                    $issues[] = $this->issue($run->id, $row->row_number, 'warning', 'No unique local program match. Excel institution, program and major were retained.');
+                // Only actionable when the HEI's programs are loaded locally; otherwise there is nothing to match.
+                if ($institution && ! $data['program_id']) {
+                    $issues[] = $this->issue($run->id, $row->row_number, 'warning', 'No unique local program match. Excel institution, program and major were retained.', $row->list_number);
                 }
                 $old = $existing->get($row->identity_key);
                 $changed = ! $old || collect($data)->contains(fn ($value, $key) => (string) $old->getAttribute($key) !== (string) $value);
@@ -183,9 +185,10 @@ class GraduateImportService
         });
     }
 
-    private function issue(int $run, int $row, string $severity, string $message): array
+    /** @return array<string, int|string|null> */
+    private function issue(int $run, int $row, string $severity, string $message, ?string $listNumber = null): array
     {
-        return ['graduate_import_id' => $run, 'row_number' => $row, 'severity' => $severity, 'message' => mb_substr($message, 0, 500)];
+        return ['graduate_import_id' => $run, 'row_number' => $row, 'list_number' => $listNumber, 'severity' => $severity, 'message' => mb_substr($message, 0, 500)];
     }
 
     public function advance(int $id): void
@@ -224,12 +227,16 @@ class GraduateImportService
         foreach (['created', 'updated', 'unchanged', 'skipped', 'invalid'] as $field) {
             $counts[$field] = $chunks->sum($field);
         }
+        $issues = DB::table('graduate_import_issues')->where('graduate_import_id', $run->id)
+            ->selectRaw('severity, COUNT(*) AS total')->groupBy('severity')->pluck('total', 'severity');
+        $errors = (int) ($issues['error'] ?? 0);
 
         return ['id' => $run->id, 'filename' => $run->filename, 'status' => $run->status, 'phase' => $run->phase,
             'total_rows' => (int) $run->total_rows, 'total_chunks' => $chunks->count(), 'completed_chunks' => $chunks->where('status', 'completed')->count(),
             'counts' => $counts, 'error' => $run->error, 'created_at' => $run->created_at->toIso8601String(),
             'finished_at' => $run->finished_at?->toIso8601String(),
-            'issues' => DB::table('graduate_import_issues')->where('graduate_import_id', $run->id)->count(),
+            'issues' => (int) $issues->sum(),
+            'issue_counts' => ['errors' => $errors, 'notes' => (int) $issues->sum() - $errors],
             'failed_chunks' => $chunks->where('status', 'failed')->map(fn ($c) => ['start_row' => $c->start_row, 'end_row' => $c->end_row, 'error' => $c->error])->values()->all()];
     }
 }

@@ -21,7 +21,7 @@ class ImportController extends Controller
     {
         Gate::authorize('viewImports');
 
-        return Inertia::render('import/index');
+        return Inertia::render('settings/import');
     }
 
     /**
