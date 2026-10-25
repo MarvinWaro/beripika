@@ -45,6 +45,7 @@ import { toast } from 'sonner';
 // Import the PermitDialog from the welcome components
 import PermitDialog from '@/components/welcome/permit-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
+import { cn } from '@/lib/utils';
 
 interface Program {
     id: number;
@@ -147,6 +148,78 @@ function PermitStatusBadge({ state }: { state: PermitState }) {
     );
 }
 
+const PERMIT_STATE_ORDER: PermitState[] = ['document', 'number', 'missing'];
+
+/** Legend chips that double as a single-select filter; clicking the active chip clears it. */
+function PermitFilterChips({
+    programs,
+    active,
+    onChange,
+}: {
+    programs: Program[];
+    active: PermitState | null;
+    onChange: (state: PermitState | null) => void;
+}) {
+    const counts: Record<PermitState, number> = {
+        document: 0,
+        number: 0,
+        missing: 0,
+    };
+    programs.forEach((program) => counts[getPermitState(program)]++);
+
+    return (
+        <div
+            role="group"
+            aria-label="Filter programs by permit information"
+            className="mb-4 flex flex-wrap items-center gap-2"
+        >
+            <span className="text-xs text-muted-foreground">
+                Permit information:
+            </span>
+            {PERMIT_STATE_ORDER.map((state) => {
+                const { label, icon: Icon, badge } = permitStates[state];
+                const selected = active === state;
+
+                return (
+                    <button
+                        key={state}
+                        type="button"
+                        aria-pressed={selected}
+                        disabled={counts[state] === 0}
+                        onClick={() => onChange(selected ? null : state)}
+                        className={cn(
+                            'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:cursor-not-allowed disabled:opacity-40',
+                            badge,
+                            selected &&
+                                'ring-2 ring-current ring-offset-1 ring-offset-background',
+                            active &&
+                                !selected &&
+                                'opacity-50 hover:opacity-100',
+                        )}
+                    >
+                        <Icon
+                            className="h-3.5 w-3.5 shrink-0"
+                            aria-hidden="true"
+                        />
+                        {label}
+                        <span className="tabular-nums">({counts[state]})</span>
+                    </button>
+                );
+            })}
+            {active && (
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => onChange(null)}
+                >
+                    Show all ({programs.length})
+                </Button>
+            )}
+        </div>
+    );
+}
+
 export default function InstitutionIndex({ institutions, error }: Props) {
     const { can } = usePermissions();
     const [search, setSearch] = useState('');
@@ -155,6 +228,11 @@ export default function InstitutionIndex({ institutions, error }: Props) {
         useState<OwnershipFilter>('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [expandedId, setExpandedId] = useState<number | null>(null);
+    // Scoped to one institution so expanding another school always starts unfiltered.
+    const [permitFilter, setPermitFilter] = useState<{
+        instCode: string;
+        state: PermitState;
+    } | null>(null);
     const [loadedPrograms, setLoadedPrograms] = useState<
         Record<string, Program[]>
     >({});
@@ -503,6 +581,21 @@ export default function InstitutionIndex({ institutions, error }: Props) {
                                                 loadError[instCode] || null;
                                             const isExpanded =
                                                 expandedId === row.id;
+                                            const activePermit =
+                                                permitFilter?.instCode ===
+                                                instCode
+                                                    ? permitFilter.state
+                                                    : null;
+                                            const visiblePrograms =
+                                                progs && activePermit
+                                                    ? progs.filter(
+                                                          (program) =>
+                                                              getPermitState(
+                                                                  program,
+                                                              ) ===
+                                                              activePermit,
+                                                      )
+                                                    : progs;
                                             const ownershipSector =
                                                 normalizeOwnership(
                                                     row.ownership_sector,
@@ -622,20 +715,31 @@ export default function InstitutionIndex({ institutions, error }: Props) {
                                                                             Programs
                                                                             Offered
                                                                         </h4>
-                                                                        <div
-                                                                            className="mb-4 flex flex-wrap items-center gap-2"
-                                                                            aria-label="Permit information legend"
-                                                                        >
-                                                                            <span className="text-xs text-muted-foreground">
-                                                                                Permit
-                                                                                information:
-                                                                            </span>
-                                                                            <PermitStatusBadge state="document" />
-                                                                            <PermitStatusBadge state="number" />
-                                                                            <PermitStatusBadge state="missing" />
-                                                                        </div>
+                                                                        <PermitFilterChips
+                                                                            programs={
+                                                                                progs
+                                                                            }
+                                                                            active={
+                                                                                activePermit
+                                                                            }
+                                                                            onChange={(
+                                                                                state,
+                                                                            ) =>
+                                                                                setPermitFilter(
+                                                                                    state
+                                                                                        ? {
+                                                                                              instCode,
+                                                                                              state,
+                                                                                          }
+                                                                                        : null,
+                                                                                )
+                                                                            }
+                                                                        />
                                                                         <div className="space-y-2">
-                                                                            {progs.map(
+                                                                            {(
+                                                                                visiblePrograms ??
+                                                                                progs
+                                                                            ).map(
                                                                                 (
                                                                                     program,
                                                                                 ) => (
@@ -661,7 +765,7 @@ export default function InstitutionIndex({ institutions, error }: Props) {
                                                                                                         event,
                                                                                                     ) => {
                                                                                                         event.stopPropagation();
-                                                                                                        void openProgramDetails(
+                                                                                                        openProgramDetails(
                                                                                                             row,
                                                                                                             program,
                                                                                                         );

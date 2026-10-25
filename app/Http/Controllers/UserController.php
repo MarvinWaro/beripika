@@ -56,7 +56,7 @@ class UserController extends Controller
                 'updated_at' => $user->updated_at?->toIso8601String(),
             ]);
 
-        return Inertia::render('users/index', [
+        return Inertia::render('settings/users', [
             'users' => $users,
             'roles' => $this->assignableRoles($request->user()),
             'filters' => [

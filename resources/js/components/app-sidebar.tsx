@@ -3,13 +3,9 @@ import {
     Building2,
     FileText,
     GraduationCap,
-    History,
-    Import,
     LayoutGrid,
     ListChecks,
     MessageSquareWarning,
-    ShieldCheck,
-    Users,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
@@ -48,11 +44,8 @@ const navGroups: { title: string; items: GuardedNavItem[] }[] = [
     {
         title: 'Administration',
         items: [
-            { title: 'Import', href: '/import', icon: Import, permission: 'view_imports' },
             { title: 'Concerns', href: '/concerns', icon: MessageSquareWarning, permission: 'view_concerns' },
-            { title: 'Users', href: '/users', icon: Users, permission: 'view_users' },
-            { title: 'Roles & Permissions', href: '/roles', icon: ShieldCheck, permission: 'manage_roles' },
-            { title: 'Activity Logs', href: '/logs', icon: History, permission: 'view_activity_logs' },
+            // Users, Roles & Permissions and Activity Logs live under Settings (layouts/settings/layout.tsx).
         ],
     },
 ];

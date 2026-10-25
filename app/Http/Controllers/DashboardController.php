@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\Permission;
 use App\Models\Graduate;
 use App\Services\DashboardAnalytics;
+use App\Services\DashboardOperations;
+use App\Services\GraduateLookupLog;
 use App\Services\PortalService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -12,7 +14,7 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request, PortalService $portalService, DashboardAnalytics $analytics)
+    public function index(Request $request, PortalService $portalService, DashboardAnalytics $analytics, DashboardOperations $operations)
     {
         if (! $request->user()->hasPermission(Permission::VIEW_DASHBOARD)) {
             $fallback = collect([
@@ -40,6 +42,7 @@ class DashboardController extends Controller
         $snapshot = $portalService->schoolSnapshot();
 
         return Inertia::render('dashboard', $analytics->summarize($year, $institution, $snapshot['data']) + [
+            'operations' => $operations->summarize($request->user()),
             'filters' => ['year' => $year, 'institution' => $institution],
             'portal' => [
                 'count' => $snapshot['last_fetched_at'] ? count($snapshot['data']) : null,
@@ -52,7 +55,7 @@ class DashboardController extends Controller
     /**
      * Search for graduates (AJAX endpoint for dashboard search)
      */
-    public function searchGraduates(Request $request, PortalService $portalService)
+    public function searchGraduates(Request $request, PortalService $portalService, GraduateLookupLog $lookups)
     {
         $query = trim((string) $request->input('q', ''));
 
@@ -86,16 +89,19 @@ class DashboardController extends Controller
                 ];
             });
 
+        $lookups->quickSearch($request->user(), $query, $results->count());
+
         return response()->json($results);
     }
 
     /**
      * Get full graduate details (AJAX endpoint)
      */
-    public function getGraduateDetails(Request $request, $id, PortalService $portalService)
+    public function getGraduateDetails(Request $request, int $id, PortalService $portalService, GraduateLookupLog $lookups)
     {
         $graduate = Graduate::with(['program'])
             ->findOrFail($id);
+        $lookups->view($request->user(), $graduate);
 
         // Get all institutions from Portal API for name lookup
         $institutions = collect($portalService->fetchAllHEI())

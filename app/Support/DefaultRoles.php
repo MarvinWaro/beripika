@@ -26,7 +26,8 @@ final class DefaultRoles
                 'display_name' => 'Administrator',
                 'description' => 'Manages records, imports, users and concerns.',
                 'is_system' => false,
-                'permissions' => array_values(array_filter(P::cases(), fn (P $p) => $p !== P::MANAGE_ROLES)),
+                // Clearing all imported data is destructive, so it stays with the super administrator.
+                'permissions' => array_values(array_filter(P::cases(), fn (P $p) => ! in_array($p, [P::MANAGE_ROLES, P::CLEAR_DATA], true))),
             ],
             'staff' => [
                 'display_name' => 'CHED Staff',

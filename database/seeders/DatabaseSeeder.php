@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seeds permissions, default roles and the first super administrator.
+     * Seeds permissions, default roles, the first super administrator and (locally) demo users.
      *
      * Configure the first account with ADMIN_EMAIL / ADMIN_PASSWORD in .env. When no password is
      * given, a random one is generated and printed once.
@@ -19,7 +19,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(RolesAndPermissionsSeeder::class);
+        $this->createSuperAdmin();
+        $this->call(DemoUsersSeeder::class);
+    }
 
+    private function createSuperAdmin(): void
+    {
         $email = env('ADMIN_EMAIL', 'chedro12hemis@ched.gov.ph');
         if (User::where('email', $email)->exists()) {
             return;

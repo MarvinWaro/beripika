@@ -1,3 +1,4 @@
+import ViewGraduatesDialog from '@/components/admin-institution/view-graduates-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,7 +38,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import PermitDialog from '@/components/welcome/permit-dialog';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useProgramRefresh } from '@/hooks/use-program-refresh';
 import {
     filterPrograms,
@@ -56,6 +63,7 @@ import {
     ChevronsUpDown,
     FileText,
     FileWarning,
+    GraduationCap,
     RefreshCw,
     Search,
 } from 'lucide-react';
@@ -140,6 +148,11 @@ function ProgramBrowser({
     const [selectedPermit, setSelectedPermit] = useState<PortalProgram | null>(
         null,
     );
+    const [selectedStudents, setSelectedStudents] =
+        useState<PortalProgram | null>(null);
+    // The graduates list endpoint lives under /institutions, so it needs both permissions.
+    const { canAll } = usePermissions();
+    const canViewStudents = canAll('view_institutions', 'view_graduates');
     const school = hei.find((item) => item.instCode === selectedInstCode);
     const filtered = useMemo(
         () =>
@@ -444,22 +457,60 @@ function ProgramBrowser({
                                                     </p>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() =>
-                                                            setSelectedPermit(
-                                                                program,
-                                                            )
-                                                        }
-                                                        aria-label={
-                                                            'View permit for ' +
-                                                            program.program_name
-                                                        }
-                                                    >
-                                                        <FileText className="h-3.5 w-3.5" />
-                                                        View Permit
-                                                    </Button>
+                                                    <div className="flex justify-end gap-2">
+                                                        <Tooltip>
+                                                            <TooltipTrigger
+                                                                asChild
+                                                            >
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="icon"
+                                                                    className="size-8"
+                                                                    onClick={() =>
+                                                                        setSelectedPermit(
+                                                                            program,
+                                                                        )
+                                                                    }
+                                                                    aria-label={
+                                                                        'View permit for ' +
+                                                                        program.program_name
+                                                                    }
+                                                                >
+                                                                    <FileText className="h-4 w-4" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                View permit
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                        {canViewStudents && (
+                                                            <Tooltip>
+                                                                <TooltipTrigger
+                                                                    asChild
+                                                                >
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="icon"
+                                                                        className="size-8"
+                                                                        onClick={() =>
+                                                                            setSelectedStudents(
+                                                                                program,
+                                                                            )
+                                                                        }
+                                                                        aria-label={
+                                                                            'View students of ' +
+                                                                            program.program_name
+                                                                        }
+                                                                    >
+                                                                        <GraduationCap className="h-4 w-4" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    View students
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        )}
+                                                    </div>
                                                 </TableCell>
                                             </TableRow>
                                         );
@@ -551,6 +602,26 @@ function ProgramBrowser({
                         : null
                 }
             />
+            {canViewStudents && (
+                <ViewGraduatesDialog
+                    // Remount per program so year filter and page reset.
+                    key={
+                        selectedStudents
+                            ? `${selectedStudents.institution.institution_code}-${selectedStudents.id}`
+                            : 'closed'
+                    }
+                    open={selectedStudents !== null}
+                    onOpenChange={(value) => {
+                        if (!value) setSelectedStudents(null);
+                    }}
+                    programName={selectedStudents?.program_name ?? null}
+                    major={selectedStudents?.major ?? null}
+                    institutionCode={
+                        selectedStudents?.institution.institution_code ?? null
+                    }
+                    institutionName={selectedStudents?.institution.name ?? null}
+                />
+            )}
         </div>
     );
 }

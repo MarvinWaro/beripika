@@ -56,6 +56,10 @@ export default function LogsIndex({ logs }: Props) {
                 return 'Updated graduate';
             case 'graduate_delete':
                 return 'Deleted graduate';
+            case 'graduate_view':
+                return 'Viewed graduate';
+            case 'graduate_search':
+                return 'Searched graduates';
             default:
                 return action;
         }
@@ -78,12 +82,12 @@ export default function LogsIndex({ logs }: Props) {
         <>
             <Head title="Activity Logs" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto">
                 <Card>
                     <CardHeader>
                         <CardTitle>Activity Logs</CardTitle>
                         <CardDescription>
-                            See who imported, edited, or deleted graduates and when the changes were made.
+                            See who imported, edited, deleted, or looked up graduates and when.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

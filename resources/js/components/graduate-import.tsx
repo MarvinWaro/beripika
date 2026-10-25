@@ -30,6 +30,7 @@ interface ImportRun {
     >;
     error: string | null;
     issues: number;
+    issue_counts: { errors: number; notes: number };
     created_at: string;
     finished_at: string | null;
     failed_chunks: { start_row: number; end_row: number; error: string }[];
@@ -49,9 +50,18 @@ const statusLabel = (run: ImportRun) => {
     if (run.status === 'processing') return 'Importing';
     if (run.status === 'completed_with_issues')
         return run.counts.invalid > 0
-            ? 'Imported · review skipped rows'
+            ? `Imported · ${rowsLabel(run.counts.invalid)} need fixing`
             : 'Imported · review notes';
     return run.status === 'completed' ? 'Imported' : 'Needs attention';
+};
+const rowsLabel = (count: number) =>
+    `${count.toLocaleString()} ${count === 1 ? 'row' : 'rows'}`;
+const countLabels: Record<keyof ImportRun['counts'], string> = {
+    created: 'Created',
+    updated: 'Updated',
+    unchanged: 'Unchanged',
+    skipped: 'Skipped',
+    invalid: 'Not imported',
 };
 const message = (error: unknown) =>
     axios.isAxiosError<{ message?: string }>(error)
@@ -436,21 +446,48 @@ export default function GraduateImport() {
                                 }
                             />
                             <dl className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-                                {Object.entries(run.counts).map(
-                                    ([key, value]) => (
-                                        <div key={key}>
-                                            <dt className="text-xs text-muted-foreground capitalize">
-                                                {key === 'invalid'
-                                                    ? 'Row errors'
-                                                    : key}
-                                            </dt>
-                                            <dd className="text-lg font-semibold">
-                                                {value.toLocaleString()}
-                                            </dd>
-                                        </div>
-                                    ),
-                                )}
+                                {(
+                                    Object.keys(countLabels) as Array<
+                                        keyof ImportRun['counts']
+                                    >
+                                ).map((key) => (
+                                    <div key={key}>
+                                        <dt className="text-xs text-muted-foreground">
+                                            {countLabels[key]}
+                                        </dt>
+                                        <dd className="text-lg font-semibold">
+                                            {run.counts[key].toLocaleString()}
+                                        </dd>
+                                    </div>
+                                ))}
                             </dl>
+                            {(run.counts.skipped > 0 ||
+                                run.counts.invalid > 0) && (
+                                <ul className="space-y-1 text-xs text-muted-foreground">
+                                    {run.counts.skipped > 0 && (
+                                        <li>
+                                            <span className="font-medium text-foreground">
+                                                Skipped:
+                                            </span>{' '}
+                                            rows without student data (such as
+                                            template numbering or region labels)
+                                            or exact repeats of an earlier row.
+                                            Nothing to fix.
+                                        </li>
+                                    )}
+                                    {run.counts.invalid > 0 && (
+                                        <li>
+                                            <span className="font-medium text-foreground">
+                                                Not imported:
+                                            </span>{' '}
+                                            rows with errors. Fix them in Excel
+                                            and upload the file again; students
+                                            already imported will show as
+                                            Unchanged.
+                                        </li>
+                                    )}
+                                </ul>
+                            )}
                             {run.finished_at &&
                                 run.issues > 0 &&
                                 run.counts.invalid === 0 && (
@@ -486,8 +523,9 @@ export default function GraduateImport() {
                                         variant="outline"
                                         onClick={() => setReviewOpen(true)}
                                     >
-                                        View review notes (
-                                        {run.issues.toLocaleString()})
+                                        {run.issue_counts.errors > 0
+                                            ? `Review ${rowsLabel(run.issue_counts.errors)} not imported`
+                                            : `View review notes (${run.issues.toLocaleString()})`}
                                     </Button>
                                 )}
                             </div>
@@ -522,12 +560,16 @@ export default function GraduateImport() {
                             imported.
                         </p>
                         <p className="mt-2 text-muted-foreground">
+                            Rows without student data (template numbering or
+                            region labels) and exact repeats are skipped.
                             Conflicting duplicate SO records are reported for
-                            review. Missing local program matches retain the
-                            Excel program information. Official workbooks may
-                            include reference tabs; the importer selects the tab
-                            named SO Masterlist. Files are stored privately and
-                            removed 30 days after completed processing.
+                            review. Students are linked to a local program when
+                            their HEI&apos;s programs are loaded; otherwise the
+                            Excel program information is kept. Official
+                            workbooks may include reference tabs; the importer
+                            selects the tab named SO Masterlist. Files are
+                            stored privately and removed 30 days after completed
+                            processing.
                         </p>
                     </details>
                     <p className="text-xs text-muted-foreground">

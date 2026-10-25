@@ -59,7 +59,7 @@ test('xlsx and xls persist PSCED dates and stable identities', function ($xls) {
     runSoais($run);
     $student = Graduate::sole();
     expect($student->psced_code)->toBe('464108')->and($student->date_graduated)->toBe('2024-06-01')
-        ->and($student->graduation_year)->toBe(2024)->and($run->fresh()->status)->toBe('completed_with_issues');
+        ->and($student->graduation_year)->toBe(2024)->and($run->fresh()->status)->toBe('completed');
     expect(app(GraduateImportService::class)->serialize($run->fresh())['counts']['created'])->toBe(1);
 })->with([false, true]);
 
@@ -143,12 +143,14 @@ test('browser processing consumes real reserved jobs without a separate worker a
     Queue::swap($this->realQueue);
     $run = uploadSoais([SoaisFixture::row()], $this->admin);
     $this->actingAs($this->admin)->postJson('/import/graduates/runs/'.$run->id.'/process')
-        ->assertOk()->assertJsonPath('run.status', 'completed_with_issues')->assertJsonPath('run.counts.created', 1);
+        ->assertOk()->assertJsonPath('run.status', 'completed')->assertJsonPath('run.counts.created', 1);
     $this->postJson('/import/graduates/runs/'.$run->id.'/process')->assertOk()->assertJsonPath('run.counts.created', 1);
     expect(Graduate::count())->toBe(1)->and(DB::table('jobs')->count())->toBe(0);
 });
 
 test('review notes are paginated and scoped to the selected import', function () {
+    // Program-match notes are only written when the HEI is loaded locally.
+    Institution::create(['institution_code' => '12001', 'name' => 'Example College', 'type' => 'Private']);
     $rows = [];
     for ($i = 0; $i < 30; $i++) {
         $rows[] = SoaisFixture::row('SO-'.$i);
@@ -268,7 +270,7 @@ test('official multi-sheet workbook selects the SO Masterlist and ignores refere
     runSoais($run);
 
     expect($run->fresh()->sheet)->toBe('SO Masterlist')
-        ->and($run->fresh()->status)->toBe('completed_with_issues')
+        ->and($run->fresh()->status)->toBe('completed')
         ->and(Graduate::sole()->so_number)->toBe('SO-1');
 });
 
@@ -283,4 +285,62 @@ test('multi-sheet workbook without a clearly named masterlist fails safely', fun
 
     expect(fn () => runSoais($run))->toThrow(RuntimeException::class, 'one SOAIS masterlist');
     expect(Graduate::count())->toBe(0);
+});
+
+test('program match notes are written only when the HEI is loaded locally', function () {
+    $unknownHei = uploadSoais([SoaisFixture::row()], $this->admin);
+    runSoais($unknownHei);
+    expect(DB::table('graduate_import_issues')->where('graduate_import_id', $unknownHei->id)->count())->toBe(0)
+        ->and($unknownHei->fresh()->status)->toBe('completed');
+
+    Institution::create(['institution_code' => '12001', 'name' => 'Example College', 'type' => 'Private']);
+    $loadedHei = uploadSoais([SoaisFixture::row('SO-2')], $this->admin);
+    runSoais($loadedHei);
+    expect(DB::table('graduate_import_issues')->where('graduate_import_id', $loadedHei->id)->where('severity', 'warning')->count())->toBe(1)
+        ->and($loadedHei->fresh()->status)->toBe('completed_with_issues');
+});
+
+test('review lists rows that were not imported first and errors show the found value', function () {
+    Institution::create(['institution_code' => '12001', 'name' => 'Example College', 'type' => 'Private']);
+    $badSex = SoaisFixture::row('SO-SEX');
+    $badSex[9] = 'FM';
+    $badDate = SoaisFixture::row('SO-DATE');
+    $badDate[15] = '*';
+    $run = uploadSoais([SoaisFixture::row('SO-1'), SoaisFixture::row('SO-2'), $badSex, $badDate], $this->admin);
+    runSoais($run);
+
+    $this->actingAs($this->admin)->getJson('/import/graduates/runs/'.$run->id.'/review')
+        ->assertOk()
+        ->assertJsonPath('total', 4)
+        ->assertJsonPath('data.0.severity', 'error')
+        ->assertJsonPath('data.0.message', 'Sex must be Male or Female, or blank (found "FM").')
+        ->assertJsonPath('data.1.severity', 'error')
+        ->assertJsonPath('data.1.message', 'Missing or invalid graduation date (found "*"). Use an Excel date or YYYY/MM/DD.')
+        ->assertJsonPath('data.2.severity', 'warning');
+
+    expect(app(GraduateImportService::class)->serialize($run->fresh()))
+        ->toMatchArray(['issues' => 4, 'issue_counts' => ['errors' => 2, 'notes' => 2]]);
+});
+
+test('review notes and the CSV export carry the masterlist No. of each row', function () {
+    Institution::create(['institution_code' => '12001', 'name' => 'Example College', 'type' => 'Private']);
+    $note = SoaisFixture::row('SO-NOTE');
+    $note[0] = 9858;
+    $rejected = SoaisFixture::row('SO-SEX');
+    $rejected[0] = 9859;
+    $rejected[9] = 'FM';
+    $run = uploadSoais([$note, $rejected], $this->admin);
+    runSoais($run);
+
+    $this->actingAs($this->admin)->getJson('/import/graduates/runs/'.$run->id.'/review')
+        ->assertOk()
+        ->assertJsonPath('data.0.severity', 'error')
+        ->assertJsonPath('data.0.list_number', '9859')
+        ->assertJsonPath('data.0.row_number', 5)
+        ->assertJsonPath('data.1.severity', 'warning')
+        ->assertJsonPath('data.1.list_number', '9858');
+
+    $csv = $this->get('/import/graduates/runs/'.$run->id.'/issues')->assertOk()->streamedContent();
+    expect($csv)->toStartWith("No.,\"Excel row\",Severity,Issue\n")
+        ->toContain('9859,5,error,"Sex must be Male or Female, or blank (found ""FM"")."');
 });

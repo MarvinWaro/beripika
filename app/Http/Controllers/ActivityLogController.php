@@ -28,7 +28,7 @@ class ActivityLogController extends Controller
             ->paginate(50)
             ->withQueryString();
 
-        return Inertia::render('logs/index', [
+        return Inertia::render('settings/logs', [
             'logs' => $logs->through(fn (ActivityLog $log) => [
                 'id' => $log->id,
                 'user_name' => $log->user?->name ?? 'System',

@@ -24,7 +24,14 @@ import {
     PopoverTrigger,
     PopoverContent,
 } from '@/components/ui/popover';
-import { Search, Edit2, Trash2, AlertTriangle } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Search, Edit2, Trash2, AlertTriangle, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -32,6 +39,9 @@ import { usePermissions } from '@/hooks/use-permissions';
 import EditGraduateDialog, {
     GraduateForEdit,
 } from '@/components/graduates/edit-dialog';
+import FilterCombobox, {
+    type FilterOption,
+} from '@/components/graduates/filter-combobox';
 
 interface Institution {
     institution_code: string;
@@ -75,12 +85,26 @@ interface Pagination<T> {
 
 interface Filters {
     q?: string | null;
+    hei?: string | null;
+    program?: string | null;
+    year?: number | null;
+    sex?: 'MALE' | 'FEMALE' | null;
+}
+
+interface FilterOptions {
+    institutions: FilterOption[];
+    programs: string[];
+    years: number[];
 }
 
 interface Props {
     graduates: Pagination<Graduate>;
     filters: Filters;
+    filterOptions: FilterOptions;
 }
+
+/** Select components need a non-empty value for "no filter". */
+const ALL = 'all';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -93,7 +117,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function GraduateIndex({ graduates, filters }: Props) {
+export default function GraduateIndex({
+    graduates,
+    filters,
+    filterOptions,
+}: Props) {
     const [items, setItems] = useState<Graduate[]>(graduates.data);
     const [total, setTotal] = useState<number>(
         graduates.total ?? graduates.data.length,
@@ -199,19 +227,39 @@ export default function GraduateIndex({ graduates, filters }: Props) {
         }
     };
 
-    const onSearchSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const hasFilters = Boolean(
+        filters.hei || filters.program || filters.year || filters.sex,
+    );
+
+    // Search and filters travel together; any change starts again at page 1.
+    const applyFilters = (changes: Partial<Filters> = {}) => {
+        const next: Filters = {
+            q: search.trim() || null,
+            hei: filters.hei,
+            program: filters.program,
+            year: filters.year,
+            sex: filters.sex,
+            ...changes,
+        };
 
         router.get(
             '/graduates',
-            {
-                q: search || undefined,
-            },
+            Object.fromEntries(
+                Object.entries(next).filter(
+                    ([, value]) => value !== null && value !== undefined,
+                ),
+            ),
             {
                 preserveScroll: true,
                 preserveState: true,
+                replace: true,
             },
         );
+    };
+
+    const onSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        applyFilters();
     };
 
     return (
@@ -222,12 +270,19 @@ export default function GraduateIndex({ graduates, filters }: Props) {
                 <Card>
                     <CardHeader>
                         <CardTitle>All Graduates</CardTitle>
-                        <CardDescription>
+                        <CardDescription aria-live="polite">
                             {filters.q ? (
                                 <>
                                     Showing {items.length} of {total} graduate
                                     {total !== 1 ? 's' : ''} matching "
                                     {filters.q}"
+                                    {hasFilters && ' and the selected filters'}
+                                </>
+                            ) : hasFilters ? (
+                                <>
+                                    Showing {items.length} of {total} graduate
+                                    {total !== 1 ? 's' : ''} matching the
+                                    selected filters
                                 </>
                             ) : (
                                 <>
@@ -238,17 +293,132 @@ export default function GraduateIndex({ graduates, filters }: Props) {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {/* Search Bar (server-side) */}
-                        <form onSubmit={onSearchSubmit} className="mb-4">
-                            <div className="relative">
+                        {/* Search + filters (server-side). Filters apply on change; text applies on Search/Enter. */}
+                        <form
+                            role="search"
+                            onSubmit={onSearchSubmit}
+                            className="mb-4 flex flex-col gap-2 xl:flex-row xl:items-center"
+                        >
+                            <div className="relative min-w-0 flex-1">
                                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     type="text"
+                                    aria-label="Search graduates"
                                     placeholder="Search by name, SO number, program, institution, or year..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     className="pl-10"
                                 />
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap xl:flex-nowrap">
+                                <FilterCombobox
+                                    label="Institution"
+                                    allLabel="All institutions"
+                                    searchPlaceholder="Search institutions…"
+                                    emptyText="No institution found."
+                                    options={filterOptions.institutions}
+                                    value={filters.hei ?? null}
+                                    // A program list belongs to one institution, so reset it.
+                                    onChange={(hei) =>
+                                        applyFilters({ hei, program: null })
+                                    }
+                                    className="col-span-2 sm:w-60"
+                                />
+                                <FilterCombobox
+                                    label="Program"
+                                    allLabel="All programs"
+                                    searchPlaceholder="Search programs…"
+                                    emptyText="No program found."
+                                    options={filterOptions.programs.map(
+                                        (program) => ({
+                                            value: program,
+                                            label: program,
+                                        }),
+                                    )}
+                                    value={filters.program ?? null}
+                                    onChange={(program) =>
+                                        applyFilters({ program })
+                                    }
+                                    className="col-span-2 sm:w-60"
+                                />
+                                <Select
+                                    value={
+                                        filters.year ? String(filters.year) : ALL
+                                    }
+                                    onValueChange={(value) =>
+                                        applyFilters({
+                                            year:
+                                                value === ALL
+                                                    ? null
+                                                    : Number(value),
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger
+                                        aria-label="Year graduated"
+                                        className="h-10 sm:w-36"
+                                    >
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={ALL}>
+                                            All years
+                                        </SelectItem>
+                                        {filterOptions.years.map((year) => (
+                                            <SelectItem
+                                                key={year}
+                                                value={String(year)}
+                                            >
+                                                {year}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Select
+                                    value={filters.sex ?? ALL}
+                                    onValueChange={(value) =>
+                                        applyFilters({
+                                            sex:
+                                                value === ALL
+                                                    ? null
+                                                    : (value as Filters['sex']),
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger
+                                        aria-label="Sex"
+                                        className="h-10 sm:w-32"
+                                    >
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={ALL}>All sexes</SelectItem>
+                                        <SelectItem value="MALE">Male</SelectItem>
+                                        <SelectItem value="FEMALE">Female</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Button type="submit" className="h-10">
+                                    <Search className="h-4 w-4" />
+                                    Search
+                                </Button>
+                                {hasFilters && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        className="h-10"
+                                        onClick={() =>
+                                            applyFilters({
+                                                hei: null,
+                                                program: null,
+                                                year: null,
+                                                sex: null,
+                                            })
+                                        }
+                                    >
+                                        <X className="h-4 w-4" />
+                                        Clear filters
+                                    </Button>
+                                )}
                             </div>
                         </form>
 
@@ -282,8 +452,8 @@ export default function GraduateIndex({ graduates, filters }: Props) {
                                                 colSpan={14}
                                                 className="text-center py-8 text-muted-foreground"
                                             >
-                                                {filters.q
-                                                    ? 'No graduates found for your search.'
+                                                {filters.q || hasFilters
+                                                    ? 'No graduates match your search or filters.'
                                                     : 'No graduates available.'}
                                             </TableCell>
                                         </TableRow>

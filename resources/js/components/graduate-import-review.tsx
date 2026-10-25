@@ -13,6 +13,7 @@ interface ReviewPage {
     data: {
         id: number;
         row_number: number;
+        list_number: string | null;
         severity: string;
         message: string;
     }[];
@@ -64,8 +65,8 @@ export default function GraduateImportReview({
                 <SheetHeader className="pr-12">
                     <SheetTitle>Import review · #{runId}</SheetTitle>
                     <SheetDescription>
-                        Review notes keep the student's Excel information. Row
-                        errors mean that row was not imported.
+                        Rows that were not imported are listed first. Review
+                        notes keep the student&apos;s Excel information.
                     </SheetDescription>
                 </SheetHeader>
                 <div
@@ -92,6 +93,8 @@ export default function GraduateImportReview({
                                     className="rounded-lg border p-4"
                                 >
                                     <p className="mb-2 text-sm font-semibold">
+                                        {issue.list_number &&
+                                            `No. ${issue.list_number} · `}
                                         Excel row {issue.row_number} ·{' '}
                                         {issue.severity === 'error'
                                             ? 'Row not imported'
