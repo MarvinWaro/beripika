@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     /**
      * Seeds permissions, default roles, the first super administrator and (locally) demo users.
      *
-     * Configure the first account with ADMIN_EMAIL / ADMIN_PASSWORD in .env. When no password is
-     * given, a random one is generated and printed once.
+     * Configure the first account with ADMIN_EMAIL / ADMIN_PASSWORD (config/app.php → admin). When no
+     * password is given, a random one is generated and printed once.
      */
     public function run(): void
     {
@@ -25,14 +25,15 @@ class DatabaseSeeder extends Seeder
 
     private function createSuperAdmin(): void
     {
-        $email = env('ADMIN_EMAIL', 'chedro12hemis@ched.gov.ph');
+        $email = (string) config('app.admin.email');
         if (User::where('email', $email)->exists()) {
             return;
         }
 
-        $password = env('ADMIN_PASSWORD') ?: Str::password(16, symbols: false);
+        $configuredPassword = config('app.admin.password');
+        $password = $configuredPassword ?: Str::password(16, symbols: false);
         User::forceCreate([
-            'name' => env('ADMIN_NAME', 'CHED Administrator'),
+            'name' => config('app.admin.name'),
             'email' => $email,
             'password' => $password,
             'email_verified_at' => now(),
@@ -40,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        if (! env('ADMIN_PASSWORD')) {
+        if (! $configuredPassword) {
             $this->command?->warn("Super administrator created: {$email} / {$password}  (change it after signing in)");
         }
     }

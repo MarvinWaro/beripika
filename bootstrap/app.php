@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Behind Coolify's reverse proxy (TLS terminates there): trust X-Forwarded-* so URLs are
+        // https and audit logs / rate limits see the visitor's IP, not the proxy's.
+        $middleware->trustProxies(at: '*');
+
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'ui_style']);
 
         $middleware->web(append: [
