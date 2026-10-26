@@ -3,9 +3,7 @@ import { GraduationCap, Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import DataQualityCard from '@/components/dashboard/data-quality-card';
 import FilterBar from '@/components/dashboard/filter-bar';
-import GraduateSearch from '@/components/dashboard/graduate-search';
 import KpiRow from '@/components/dashboard/kpi-row';
-import OperationsPanel from '@/components/dashboard/operations-panel';
 import RankingChart from '@/components/dashboard/ranking-chart';
 import SexTrendChart from '@/components/dashboard/sex-trend-chart';
 import ShareBar from '@/components/dashboard/share-bar';
@@ -14,18 +12,11 @@ import {
     formatNumber,
     type DashboardChartData,
     type DashboardFilters,
-    type DashboardOperations,
     type DashboardOptions,
     type DashboardStats,
     type QualityCheck,
 } from '@/components/dashboard/types';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
@@ -34,7 +25,6 @@ interface DashboardProps {
     stats: DashboardStats;
     chartData: DashboardChartData;
     quality: QualityCheck[];
-    operations: DashboardOperations;
     options: DashboardOptions;
     filters: DashboardFilters;
     portal: {
@@ -63,7 +53,6 @@ export default function Dashboard({
     stats,
     chartData,
     quality,
-    operations,
     options,
     filters,
     portal,
@@ -116,9 +105,6 @@ export default function Dashboard({
         );
     }
 
-    const hasOperations = Object.values(operations).some(
-        (section) => section !== null,
-    );
     const allUnclassified =
         chartData.programTypes.length === 1 &&
         chartData.programTypes[0].label === 'Unclassified';
@@ -259,48 +245,14 @@ export default function Dashboard({
                             />
                         </div>
                     )}
-                    <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-12">
-                        {stats.graduates > 0 && (
-                            <DataQualityCard
-                                checks={quality}
-                                total={stats.graduates}
-                                className={cn(
-                                    'min-w-0',
-                                    hasOperations
-                                        ? 'xl:col-span-5'
-                                        : 'lg:col-span-2 xl:col-span-12',
-                                )}
-                            />
-                        )}
-                        {hasOperations && (
-                            <OperationsPanel
-                                operations={operations}
-                                animated={animated}
-                                className={cn(
-                                    'min-w-0',
-                                    stats.graduates > 0
-                                        ? 'xl:col-span-7'
-                                        : 'lg:col-span-2 xl:col-span-12',
-                                )}
-                            />
-                        )}
-                    </div>
+                    {stats.graduates > 0 && (
+                        <DataQualityCard
+                            checks={quality}
+                            total={stats.graduates}
+                            className="min-w-0"
+                        />
+                    )}
                 </section>
-                {can('view_graduates') && (
-                    <Card className="border-blue-200 dark:border-blue-900">
-                        <CardHeader>
-                            <CardTitle>Quick graduate search</CardTitle>
-                            <CardDescription>
-                                Search across all records by name, SO number, or
-                                program. Dashboard filters do not limit this
-                                search.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <GraduateSearch />
-                        </CardContent>
-                    </Card>
-                )}
                 <p className="text-xs text-muted-foreground">
                     Counts describe imported graduate records, not enrollment,
                     graduation rates, or institutional performance.

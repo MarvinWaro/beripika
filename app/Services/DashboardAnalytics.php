@@ -23,6 +23,9 @@ class DashboardAnalytics
 
     private const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+    /** Rows shown per data-quality breakdown before "and N more". */
+    private const BREAKDOWN_LIMIT = 10;
+
     /**
      * @param  array<int, array<string, mixed>>  $schools  CHED portal directory (PortalService::schoolSnapshot()['data'])
      * @return array<string, mixed>
@@ -70,7 +73,7 @@ class DashboardAnalytics
                 'provinces' => $this->provinces($perHei, $directory),
                 'programTypes' => $this->programTypes($perProgram, $catalog),
             ],
-            'quality' => $this->quality($query, $perHei, $perProgram, $directory, $catalog),
+            'quality' => $this->quality($query, $perHei, $perProgram, $directory, $catalog, $names),
             'options' => [
                 'years' => Graduate::whereNotNull('graduation_year')->distinct()->orderByDesc('graduation_year')->pluck('graduation_year'),
                 'institutions' => Graduate::whereNotNull('hei_uii')->where('hei_uii', '!=', '')->distinct()->pluck('hei_uii')
@@ -229,27 +232,63 @@ class DashboardAnalytics
     }
 
     /**
-     * Masterlist gaps Records can fix. A check is null when it cannot be measured yet.
+     * Masterlist gaps Records can fix, each with a breakdown showing where they come from.
+     * A check is null when it cannot be measured yet (no portal directory / empty catalog).
      *
      * @param  Builder<Graduate>  $query
      * @param  Collection<array-key, int>  $perHei
      * @param  Collection<int, array{label: string, count: int}>  $perProgram
      * @param  array<array-key, array<string, mixed>>  $directory
      * @param  Collection<string, string>  $catalog
-     * @return list<array{key: string, label: string, count: int|null}>
+     * @param  Collection<array-key, mixed>  $names
+     * @return list<array{key: string, label: string, dimension: string, count: int|null, breakdown: list<array{label: string, count: int}>, more: int}>
      */
-    private function quality(Builder $query, Collection $perHei, Collection $perProgram, array $directory, Collection $catalog): array
+    private function quality(Builder $query, Collection $perHei, Collection $perProgram, array $directory, Collection $catalog, Collection $names): array
     {
-        $missing = fn (string $column) => (clone $query)->where(fn ($q) => $q->whereNull($column)->orWhere($column, ''))->count();
+        // Missing values per institution, so Records knows which school's masterlist to fix.
+        $missing = fn (string $column) => (clone $query)->toBase()
+            ->where(fn ($q) => $q->whereNull($column)->orWhere($column, ''))
+            ->selectRaw('hei_uii, COUNT(*) as total')->groupBy('hei_uii')->pluck('total', 'hei_uii');
+        $institution = fn (string $code) => $code === '' ? 'No HEI code' : ($names->get($code) ?: 'HEI '.$code);
+        $unmeasured = ['count' => null, 'breakdown' => [], 'more' => 0];
 
         return [
-            ['key' => 'sex', 'label' => 'Sex not recorded', 'count' => $missing('sex')],
-            ['key' => 'psced', 'label' => 'PSCED code missing', 'count' => $missing('psced_code')],
-            ['key' => 'academic_year', 'label' => 'Academic year missing', 'count' => $missing('academic_year')],
-            ['key' => 'hei', 'label' => 'HEI code not in the CHED portal', 'count' => $directory === [] ? null
-                : $perHei->reject(fn ($count, $code) => isset($directory[$code]))->sum()],
-            ['key' => 'catalog', 'label' => 'Program name not in the Program Catalog', 'count' => $catalog->isEmpty() ? null
-                : $perProgram->reject(fn ($program) => $catalog->has(ProgramCatalog::normalizeName($program['label'])))->sum('count')],
+            ['key' => 'sex', 'label' => 'Sex not recorded', 'dimension' => 'Institution']
+            + $this->breakdown($missing('sex'), $institution),
+            ['key' => 'psced', 'label' => 'PSCED code missing', 'dimension' => 'Institution']
+            + $this->breakdown($missing('psced_code'), $institution),
+            ['key' => 'academic_year', 'label' => 'Academic year missing', 'dimension' => 'Institution']
+            + $this->breakdown($missing('academic_year'), $institution),
+            ['key' => 'hei', 'label' => 'HEI code not in the CHED portal', 'dimension' => 'HEI code']
+            + ($directory === [] ? $unmeasured : $this->breakdown(
+                $perHei->reject(fn ($count, $code) => isset($directory[$code])),
+                fn (string $code) => 'HEI '.$code,
+            )),
+            ['key' => 'catalog', 'label' => 'Program name not in the Program Catalog', 'dimension' => 'Program']
+            + ($catalog->isEmpty() ? $unmeasured : $this->breakdown(
+                $perProgram->reject(fn ($program) => $catalog->has(ProgramCatalog::normalizeName($program['label'])))
+                    ->mapWithKeys(fn ($program) => [$program['label'] => $program['count']]),
+                fn (string $label) => $label,
+            )),
+        ];
+    }
+
+    /**
+     * Largest groups first, capped, with the number of groups left out.
+     *
+     * @param  Collection<array-key, mixed>  $counts  group key => record count
+     * @param  callable(string): string  $label
+     * @return array{count: int, breakdown: list<array{label: string, count: int}>, more: int}
+     */
+    private function breakdown(Collection $counts, callable $label): array
+    {
+        $rows = $counts->map(fn ($count, $key) => ['label' => $label((string) $key), 'count' => (int) $count])
+            ->sortBy([['count', 'desc'], ['label', 'asc']])->values();
+
+        return [
+            'count' => (int) $rows->sum('count'),
+            'breakdown' => array_values($rows->take(self::BREAKDOWN_LIMIT)->all()),
+            'more' => max(0, $rows->count() - self::BREAKDOWN_LIMIT),
         ];
     }
 }
