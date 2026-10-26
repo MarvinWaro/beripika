@@ -31,8 +31,22 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Setup Application
-        run: composer setup
+      # Not `composer setup`: it migrates against MySQL, which the runner doesn't have.
+      # Tests use in-memory SQLite (phpunit.xml).
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      # Feature tests render pages that need the Vite manifest.
+      - name: Build assets
+        run: npm run build
 
       - name: Run CI Checks
         run: composer ci:check

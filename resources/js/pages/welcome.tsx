@@ -4,7 +4,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import InstitutionResultsList from '@/components/welcome/institution-results-list';
 import ProgramsList from '@/components/welcome/programs-list';
-import { CountUp, FloatingChips, Reveal, RevealHeadline, TopoBackground } from '@/components/welcome/landing-motion';
+import {
+    CountUp,
+    FloatingChips,
+    Reveal,
+    RevealHeadline,
+    TopoBackground,
+} from '@/components/welcome/landing-motion';
 import SearchInstitutionCard from '@/components/welcome/search-institution-card';
 import PermitDialog from '@/components/welcome/permit-dialog';
 import Footer from '@/components/footer';
@@ -14,7 +20,14 @@ import WelcomeNav from '@/components/welcome/welcome-nav';
 import { Toaster } from '@/components/ui/sonner';
 import axios from 'axios';
 import { Sun, Moon, Monitor } from 'lucide-react';
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import {
+    lazy,
+    Suspense,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
 // The map library is large, so it loads only when the welcome page renders.
 const HeiMap = lazy(() => import('@/components/welcome/hei-map'));
@@ -85,33 +98,60 @@ interface HeiLocation {
     municipalityCity?: string | null;
 }
 
+/** Portal values arrive untyped; only strings and numbers are meaningful text. */
+const textOrNull = (value: unknown): string | null =>
+    typeof value === 'string' || typeof value === 'number'
+        ? String(value)
+        : null;
+
 export default function PRCCheckLanding() {
     // --- State ---
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [institutions, setInstitutions] = useState<Institution[]>([]);
 
-    const [expandedInstitutionCode, setExpandedInstitutionCode] = useState<string | null>(null);
-    const [institutionPrograms, setInstitutionPrograms] = useState<Record<string, Program[]>>({});
-    const [institutionProgramsLoading, setInstitutionProgramsLoading] = useState<Record<string, boolean>>({});
-    const [institutionProgramsError, setInstitutionProgramsError] = useState<Record<string, string | null>>({});
+    const [expandedInstitutionCode, setExpandedInstitutionCode] = useState<
+        string | null
+    >(null);
+    const [institutionPrograms, setInstitutionPrograms] = useState<
+        Record<string, Program[]>
+    >({});
+    const [institutionProgramsLoading, setInstitutionProgramsLoading] =
+        useState<Record<string, boolean>>({});
+    const [institutionProgramsError, setInstitutionProgramsError] = useState<
+        Record<string, string | null>
+    >({});
 
-    const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+    const [selectedProgram, setSelectedProgram] = useState<Program | null>(
+        null,
+    );
     const [permitDialogOpen, setPermitDialogOpen] = useState(false);
 
     const [isSearching, setIsSearching] = useState(false);
-    const [loadingProgramId, setLoadingProgramId] = useState<number | null>(null);
+    const [loadingProgramId, setLoadingProgramId] = useState<number | null>(
+        null,
+    );
 
     const [searchMessage, setSearchMessage] = useState<string | null>(null);
-    const [searchMessageType, setSearchMessageType] = useState<'warning' | 'error' | null>(null);
+    const [searchMessageType, setSearchMessageType] = useState<
+        'warning' | 'error' | null
+    >(null);
 
     // Map State
     const [heiMapLoading, setHeiMapLoading] = useState(false);
     const [heiMapError, setHeiMapError] = useState<string | null>(null);
-    const [heiMapCenter, setHeiMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+    const [heiMapCenter, setHeiMapCenter] = useState<{
+        lat: number;
+        lng: number;
+    } | null>(null);
     const [heiMapZoom, setHeiMapZoom] = useState<number>(8);
     const [heiLocations, setHeiLocations] = useState<HeiLocation[]>([]);
-    const [mapFocusLocation, setMapFocusLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const [mapFitLocations, setMapFitLocations] = useState<{ lat: number; lng: number }[] | null>(null);
+    const [mapFocusLocation, setMapFocusLocation] = useState<{
+        lat: number;
+        lng: number;
+    } | null>(null);
+    const [mapFitLocations, setMapFitLocations] = useState<
+        { lat: number; lng: number }[] | null
+    >(null);
 
     const { appearance, updateAppearance } = useAppearance();
 
@@ -174,7 +214,10 @@ export default function PRCCheckLanding() {
             const response = await axios.get('/hei-map');
             const data = response.data ?? {};
             const centerRaw = data.center ?? {};
-            const center = { lat: Number(centerRaw.lat ?? 6.5), lng: Number(centerRaw.lng ?? 124.5) };
+            const center = {
+                lat: Number(centerRaw.lat ?? 6.5),
+                lng: Number(centerRaw.lng ?? 124.5),
+            };
             const zoom = Number(data.zoom ?? 8);
             const heisRaw: Record<string, unknown>[] = Array.isArray(data.heis)
                 ? data.heis
@@ -182,31 +225,30 @@ export default function PRCCheckLanding() {
 
             const normalized: HeiLocation[] = heisRaw
                 .map((item) => {
-                    const lat = Number(item.latitude ?? item.lat ?? item.xCoordinate ?? NaN);
-                    const lng = Number(item.longitude ?? item.lng ?? item.yCoordinate ?? NaN);
-                    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+                    const lat = Number(
+                        item.latitude ?? item.lat ?? item.xCoordinate ?? NaN,
+                    );
+                    const lng = Number(
+                        item.longitude ?? item.lng ?? item.yCoordinate ?? NaN,
+                    );
+                    if (!Number.isFinite(lat) || !Number.isFinite(lng))
+                        return null;
                     return {
-                        instCode: String(item.instCode ?? ''),
-                        instName: String(item.instName ?? 'Unknown HEI'),
+                        instCode: textOrNull(item.instCode) ?? '',
+                        instName: textOrNull(item.instName) ?? 'Unknown HEI',
                         latitude: lat,
                         longitude: lng,
-                        ownershipSector:
-                            item.ownershipSector == null && item.instOwnership == null
-                                ? null
-                                : String(item.ownershipSector ?? item.instOwnership),
-                        ownershipHei_type:
-                            item.ownershipHei_type == null
-                                ? null
-                                : String(item.ownershipHei_type),
-                        province:
-                            item.province == null ? null : String(item.province),
-                        municipalityCity:
-                            item.municipalityCity == null
-                                ? null
-                                : String(item.municipalityCity),
+                        ownershipSector: textOrNull(
+                            item.ownershipSector ?? item.instOwnership,
+                        ),
+                        ownershipHei_type: textOrNull(item.ownershipHei_type),
+                        province: textOrNull(item.province),
+                        municipalityCity: textOrNull(item.municipalityCity),
                     } as HeiLocation;
                 })
-                .filter((v): v is HeiLocation => v !== null && v.instCode !== '');
+                .filter(
+                    (v): v is HeiLocation => v !== null && v.instCode !== '',
+                );
 
             setHeiMapCenter(center);
             setHeiMapZoom(zoom);
@@ -235,7 +277,9 @@ export default function PRCCheckLanding() {
         if (!trimmed) {
             setIsSearching(false);
             setInstitutions([]);
-            setSearchMessage('Please enter an institution code or name to search.');
+            setSearchMessage(
+                'Please enter an institution code or name to search.',
+            );
             setSearchMessageType('warning');
             return;
         }
@@ -244,14 +288,18 @@ export default function PRCCheckLanding() {
         if (isNumeric && trimmed.length < 4) {
             setIsSearching(false);
             setInstitutions([]);
-            setSearchMessage('For institution codes, please enter at least 4 digits (e.g., 1201).');
+            setSearchMessage(
+                'For institution codes, please enter at least 4 digits (e.g., 1201).',
+            );
             setSearchMessageType('warning');
             return;
         }
 
         setIsSearching(true);
         try {
-            const response = await axios.post('/api/search-institution', { search: trimmed });
+            const response = await axios.post('/api/search-institution', {
+                search: trimmed,
+            });
             if (requestId !== searchRequest.current) return;
             const result: Institution[] = response.data.institutions ?? [];
 
@@ -262,7 +310,9 @@ export default function PRCCheckLanding() {
             setExpandedInstitutionCode(null);
 
             if (result.length === 0) {
-                setSearchMessage(`No institution found for "${trimmed}". Please check the code or name.`);
+                setSearchMessage(
+                    `No institution found for "${trimmed}". Please check the code or name.`,
+                );
                 setSearchMessageType('warning');
                 setMapFocusLocation(null);
                 setMapFitLocations(null);
@@ -271,8 +321,12 @@ export default function PRCCheckLanding() {
 
                 // Find coordinates for all matched institutions
                 const matchedLocations = result
-                    .map((inst) => heiLocations.find((h) => h.instCode === inst.code))
-                    .filter((h): h is HeiLocation => h !== null && h !== undefined)
+                    .map((inst) =>
+                        heiLocations.find((h) => h.instCode === inst.code),
+                    )
+                    .filter(
+                        (h): h is HeiLocation => h !== null && h !== undefined,
+                    )
                     .map((h) => ({ lat: h.latitude, lng: h.longitude }));
 
                 if (matchedLocations.length > 1) {
@@ -306,18 +360,23 @@ export default function PRCCheckLanding() {
 
     const loadProgramsForInstitution = async (institution: Institution) => {
         const code = institution.code;
-        if (institutionPrograms[code] || institutionProgramsLoading[code]) return;
+        if (institutionPrograms[code] || institutionProgramsLoading[code])
+            return;
 
         try {
             setInstitutionProgramsLoading((s) => ({ ...s, [code]: true }));
             setInstitutionProgramsError((s) => ({ ...s, [code]: null }));
 
-            const response = await axios.get(`/api/institution/${code}/programs`);
+            const response = await axios.get(
+                `/api/institution/${code}/programs`,
+            );
             const programs: Program[] = response.data.programs ?? [];
 
             setInstitutionPrograms((s) => ({ ...s, [code]: programs }));
             setInstitutions((prev) =>
-                prev.map((inst) => (inst.code === code ? { ...inst, programs } : inst))
+                prev.map((inst) =>
+                    inst.code === code ? { ...inst, programs } : inst,
+                ),
             );
         } catch (error) {
             console.error('Failed to load programs:', error);
@@ -347,7 +406,10 @@ export default function PRCCheckLanding() {
             const matchedHei = heiLocations.find((h) => h.instCode === code);
             if (matchedHei) {
                 setMapFitLocations(null);
-                setMapFocusLocation({ lat: matchedHei.latitude, lng: matchedHei.longitude });
+                setMapFocusLocation({
+                    lat: matchedHei.latitude,
+                    lng: matchedHei.longitude,
+                });
             }
         }
     };
@@ -375,19 +437,27 @@ export default function PRCCheckLanding() {
     // --- Theme ---
     const toggleTheme = () => {
         switch (appearance) {
-            case 'light': return updateAppearance('dark');
-            case 'dark': return updateAppearance('system');
-            case 'system': return updateAppearance('light');
-            default: return updateAppearance('light');
+            case 'light':
+                return updateAppearance('dark');
+            case 'dark':
+                return updateAppearance('system');
+            case 'system':
+                return updateAppearance('light');
+            default:
+                return updateAppearance('light');
         }
     };
 
     const getThemeIcon = () => {
         switch (appearance) {
-            case 'light': return { icon: Sun, tooltip: 'Switch to Dark Mode' };
-            case 'dark': return { icon: Moon, tooltip: 'Switch to System Mode' };
-            case 'system': return { icon: Monitor, tooltip: 'Switch to Light Mode' };
-            default: return { icon: Sun, tooltip: 'Toggle theme' };
+            case 'light':
+                return { icon: Sun, tooltip: 'Switch to Dark Mode' };
+            case 'dark':
+                return { icon: Moon, tooltip: 'Switch to System Mode' };
+            case 'system':
+                return { icon: Monitor, tooltip: 'Switch to Light Mode' };
+            default:
+                return { icon: Sun, tooltip: 'Toggle theme' };
         }
     };
 
@@ -395,15 +465,22 @@ export default function PRCCheckLanding() {
 
     // Derived State
     const selectedInstitution = expandedInstitutionCode
-        ? institutions.find((inst) => inst.code === expandedInstitutionCode) ?? null
+        ? (institutions.find((inst) => inst.code === expandedInstitutionCode) ??
+          null)
         : null;
 
     const selectedPrograms = selectedInstitution
-        ? (institutionPrograms[selectedInstitution.code] ?? selectedInstitution.programs ?? [])
+        ? (institutionPrograms[selectedInstitution.code] ??
+          selectedInstitution.programs ??
+          [])
         : [];
 
-    const selectedProgramsLoading = selectedInstitution && institutionProgramsLoading[selectedInstitution.code] === true;
-    const selectedProgramsError = selectedInstitution && (institutionProgramsError[selectedInstitution.code] ?? null);
+    const selectedProgramsLoading =
+        selectedInstitution &&
+        institutionProgramsLoading[selectedInstitution.code] === true;
+    const selectedProgramsError =
+        selectedInstitution &&
+        (institutionProgramsError[selectedInstitution.code] ?? null);
 
     return (
         <div className="relative min-h-screen bg-background font-sans">
@@ -430,34 +507,59 @@ export default function PRCCheckLanding() {
                         </span>
                         <RevealHeadline
                             className="text-display mt-6 text-5xl sm:text-6xl lg:text-7xl"
-                            lines={['Verify programs,', 'permits and', 'institutions.']}
+                            lines={[
+                                'Verify programs,',
+                                'permits and',
+                                'institutions.',
+                            ]}
                         />
-                        <p className="landing-rise mt-6 max-w-xl text-lg leading-relaxed text-gray-400" style={{ animationDelay: '480ms' }}>
+                        <p
+                            className="landing-rise mt-6 max-w-xl text-lg leading-relaxed text-gray-400"
+                            style={{ animationDelay: '480ms' }}
+                        >
                             Check whether a higher education institution and its
                             programs hold a valid CHED permit or recognition,
                             straight from the CHED Regional Office XII portal.
                         </p>
-                        <dl className="landing-rise mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-white/10 pt-6 text-sm" style={{ animationDelay: '600ms' }}>
+                        <dl
+                            className="landing-rise mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-white/10 pt-6 text-sm"
+                            style={{ animationDelay: '600ms' }}
+                        >
                             <div>
-                                <dt className="text-gray-400">HEIs on the map</dt>
+                                <dt className="text-gray-400">
+                                    HEIs on the map
+                                </dt>
                                 <dd className="mt-1 text-2xl font-semibold">
-                                    <CountUp value={heiLocations.length > 0 ? heiLocations.length : null} />
+                                    <CountUp
+                                        value={
+                                            heiLocations.length > 0
+                                                ? heiLocations.length
+                                                : null
+                                        }
+                                    />
                                 </dd>
                             </div>
                             <div>
-                                <dt className="text-gray-400">Provinces covered</dt>
+                                <dt className="text-gray-400">
+                                    Provinces covered
+                                </dt>
                                 <dd className="mt-1 text-2xl font-semibold">
                                     <CountUp value={4} />
                                 </dd>
                             </div>
                             <div>
                                 <dt className="text-gray-400">Access</dt>
-                                <dd className="mt-1 text-2xl font-semibold">Free</dd>
+                                <dd className="mt-1 text-2xl font-semibold">
+                                    Free
+                                </dd>
                             </div>
                         </dl>
                     </div>
 
-                    <div className="landing-rise relative lg:col-span-5" style={{ animationDelay: '250ms' }}>
+                    <div
+                        className="landing-rise relative lg:col-span-5"
+                        style={{ animationDelay: '250ms' }}
+                    >
                         <FloatingChips />
                         <SearchInstitutionCard
                             searchTerm={searchTerm}
@@ -477,7 +579,6 @@ export default function PRCCheckLanding() {
             </section>
 
             <main className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 lg:pt-20">
-
                 {/* Important Notice (Concerns) stays at top as requested previously */}
                 {/* <div className="mb-6">
                     <Concerns />
@@ -485,45 +586,46 @@ export default function PRCCheckLanding() {
 
                 {/* HEI map */}
                 <Reveal>
-                <section aria-labelledby="hei-map-title" className="mt-4">
-                    <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                        <div>
-                            <p className="text-sm font-semibold text-primary">
-                                Explore
+                    <section aria-labelledby="hei-map-title" className="mt-4">
+                        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p className="text-sm font-semibold text-primary">
+                                    Explore
+                                </p>
+                                <h2
+                                    id="hei-map-title"
+                                    className="text-display mt-1 scroll-mt-24 text-3xl sm:text-4xl"
+                                >
+                                    Institutions across Region XII
+                                </h2>
+                            </div>
+                            <p className="max-w-md text-sm text-muted-foreground">
+                                Select a marker to see an institution&apos;s
+                                programs, permits and distance from the CHED
+                                Regional Office.
                             </p>
-                            <h2
-                                id="hei-map-title"
-                                className="text-display mt-1 scroll-mt-24 text-3xl sm:text-4xl"
-                            >
-                                Institutions across Region XII
-                            </h2>
                         </div>
-                        <p className="max-w-md text-sm text-muted-foreground">
-                            Select a marker to see an institution&apos;s programs,
-                            permits and distance from the CHED Regional Office.
-                        </p>
-                    </div>
-                    <div className="overflow-hidden rounded-(--radius-hero) border bg-muted">
-                        <Suspense
-                            fallback={
-                                <div className="grid h-[380px] place-items-center text-sm text-muted-foreground sm:h-[460px] lg:h-[560px]">
-                                    Loading map…
-                                </div>
-                            }
-                        >
-                            <HeiMap
-                                center={heiMapCenter}
-                                zoom={heiMapZoom}
-                                heis={heiLocations}
-                                isLoading={heiMapLoading}
-                                error={heiMapError}
-                                onHeiClick={handleHeiMarkerClick}
-                                focusLocation={mapFocusLocation}
-                                fitLocations={mapFitLocations}
-                            />
-                        </Suspense>
-                    </div>
-                </section>
+                        <div className="overflow-hidden rounded-(--radius-hero) border bg-muted">
+                            <Suspense
+                                fallback={
+                                    <div className="grid h-[380px] place-items-center text-sm text-muted-foreground sm:h-[460px] lg:h-[560px]">
+                                        Loading map…
+                                    </div>
+                                }
+                            >
+                                <HeiMap
+                                    center={heiMapCenter}
+                                    zoom={heiMapZoom}
+                                    heis={heiLocations}
+                                    isLoading={heiMapLoading}
+                                    error={heiMapError}
+                                    onHeiClick={handleHeiMarkerClick}
+                                    focusLocation={mapFocusLocation}
+                                    fitLocations={mapFitLocations}
+                                />
+                            </Suspense>
+                        </div>
+                    </section>
                 </Reveal>
 
                 {/* Loading Skeleton */}
@@ -537,7 +639,10 @@ export default function PRCCheckLanding() {
                                 </div>
                                 <div className="space-y-4">
                                     {[1, 2, 3].map((i) => (
-                                        <div key={i} className="flex items-start gap-4 rounded-lg border bg-white/80 p-4 dark:border-gray-800 dark:bg-gray-900/80">
+                                        <div
+                                            key={i}
+                                            className="flex items-start gap-4 rounded-lg border bg-white/80 p-4 dark:border-gray-800 dark:bg-gray-900/80"
+                                        >
                                             <Skeleton className="h-10 w-10 rounded-xl" />
                                             <div className="flex-1 space-y-2">
                                                 <Skeleton className="h-4 w-1/2" />
@@ -561,9 +666,15 @@ export default function PRCCheckLanding() {
                             <CardContent className="p-6 sm:p-8">
                                 <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                                     <div>
-                                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Search Results</h3>
+                                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                                            Search Results
+                                        </h3>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                                            {institutions.length} institution{institutions.length !== 1 ? 's' : ''} found
+                                            {institutions.length} institution
+                                            {institutions.length !== 1
+                                                ? 's'
+                                                : ''}{' '}
+                                            found
                                         </p>
                                     </div>
                                 </div>
@@ -579,72 +690,127 @@ export default function PRCCheckLanding() {
                                     <Notice />
                                 </div> */}
 
-                                <div className="grid gap-6 lg:grid-cols-12 lg:h-[460px]">
+                                <div className="grid gap-6 lg:h-[460px] lg:grid-cols-12">
                                     {/* Left: Institution List */}
-                                    <div className="min-w-0 lg:col-span-6 lg:h-full lg:overflow-y-auto lg:overflow-x-hidden lg:pr-2">
+                                    <div className="min-w-0 lg:col-span-6 lg:h-full lg:overflow-x-hidden lg:overflow-y-auto lg:pr-2">
                                         <InstitutionResultsList
                                             institutions={institutions}
-                                            expandedInstitutionCode={expandedInstitutionCode}
-                                            onToggleInstitution={handleInstitutionToggle}
-                                            programsLoading={institutionProgramsLoading}
-                                            programsError={institutionProgramsError}
+                                            expandedInstitutionCode={
+                                                expandedInstitutionCode
+                                            }
+                                            onToggleInstitution={
+                                                handleInstitutionToggle
+                                            }
+                                            programsLoading={
+                                                institutionProgramsLoading
+                                            }
+                                            programsError={
+                                                institutionProgramsError
+                                            }
                                             onProgramClick={handleProgramClick}
                                             loadingProgramId={loadingProgramId}
                                         />
                                     </div>
 
                                     {/* Right: Programs Panel */}
-                                    <div className="min-w-0 mt-4 lg:col-span-6 lg:mt-0 lg:h-full lg:overflow-y-auto lg:overflow-x-hidden lg:pl-2">
+                                    <div className="mt-4 min-w-0 lg:col-span-6 lg:mt-0 lg:h-full lg:overflow-x-hidden lg:overflow-y-auto lg:pl-2">
                                         {!selectedInstitution ? (
                                             <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/70 p-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-400">
-                                                Select an institution on the left to view its programs and permits here.
+                                                Select an institution on the
+                                                left to view its programs and
+                                                permits here.
                                             </div>
                                         ) : (
                                             <Card className="bg-muted/40">
                                                 <CardContent className="p-5 sm:p-6">
                                                     <div className="mb-3">
-                                                        <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Programs for</p>
-                                                        <h3 className="mt-1 text-sm font-semibold leading-snug text-gray-900 dark:text-white">
-                                                            {selectedInstitution.name}
+                                                        <p className="text-[11px] font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                                                            Programs for
+                                                        </p>
+                                                        <h3 className="mt-1 text-sm leading-snug font-semibold text-gray-900 dark:text-white">
+                                                            {
+                                                                selectedInstitution.name
+                                                            }
                                                         </h3>
                                                         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                                             <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 font-medium dark:bg-gray-800">
-                                                                UII: <span className="ml-1 font-mono">{selectedInstitution.code}</span>
+                                                                UII:{' '}
+                                                                <span className="ml-1 font-mono">
+                                                                    {
+                                                                        selectedInstitution.code
+                                                                    }
+                                                                </span>
                                                             </span>
                                                             <span className="inline-flex items-center rounded-md bg-gray-900 px-2 py-0.5 font-medium text-white dark:bg-gray-100 dark:text-gray-900">
-                                                                {selectedInstitution.type === 'public' ? 'Public Institution' : 'Private Institution'}
+                                                                {selectedInstitution.type ===
+                                                                'public'
+                                                                    ? 'Public Institution'
+                                                                    : 'Private Institution'}
                                                             </span>
                                                         </div>
                                                     </div>
 
                                                     <div className="mb-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                                                        <span className="font-semibold">Available Programs</span>
-                                                        <span>{selectedPrograms ? selectedPrograms.length : 0} program{selectedPrograms && selectedPrograms.length !== 1 ? 's' : ''}</span>
+                                                        <span className="font-semibold">
+                                                            Available Programs
+                                                        </span>
+                                                        <span>
+                                                            {selectedPrograms
+                                                                ? selectedPrograms.length
+                                                                : 0}{' '}
+                                                            program
+                                                            {selectedPrograms &&
+                                                            selectedPrograms.length !==
+                                                                1
+                                                                ? 's'
+                                                                : ''}
+                                                        </span>
                                                     </div>
 
                                                     {selectedProgramsLoading ? (
                                                         <div className="space-y-3">
-                                                            {[1, 2, 3].map((i) => (
-                                                                <div key={i} className="rounded-lg border bg-white/80 p-4 dark:border-gray-700 dark:bg-gray-800/80">
-                                                                    <div className="flex items-start gap-4">
-                                                                        <Skeleton className="h-10 w-10 rounded-xl" />
-                                                                        <div className="flex-1 space-y-2">
-                                                                            <Skeleton className="h-4 w-2/3" />
-                                                                            <Skeleton className="h-3 w-1/3" />
+                                                            {[1, 2, 3].map(
+                                                                (i) => (
+                                                                    <div
+                                                                        key={i}
+                                                                        className="rounded-lg border bg-white/80 p-4 dark:border-gray-700 dark:bg-gray-800/80"
+                                                                    >
+                                                                        <div className="flex items-start gap-4">
+                                                                            <Skeleton className="h-10 w-10 rounded-xl" />
+                                                                            <div className="flex-1 space-y-2">
+                                                                                <Skeleton className="h-4 w-2/3" />
+                                                                                <Skeleton className="h-3 w-1/3" />
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            ))}
+                                                                ),
+                                                            )}
                                                         </div>
                                                     ) : selectedProgramsError ? (
-                                                        <p className="text-sm text-red-600 dark:text-red-400">{selectedProgramsError}</p>
-                                                    ) : !selectedPrograms || selectedPrograms.length === 0 ? (
-                                                        <p className="text-sm text-gray-500 dark:text-gray-400">No programs available for this institution.</p>
+                                                        <p className="text-sm text-red-600 dark:text-red-400">
+                                                            {
+                                                                selectedProgramsError
+                                                            }
+                                                        </p>
+                                                    ) : !selectedPrograms ||
+                                                      selectedPrograms.length ===
+                                                          0 ? (
+                                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                            No programs
+                                                            available for this
+                                                            institution.
+                                                        </p>
                                                     ) : (
                                                         <ProgramsList
-                                                            programs={selectedPrograms}
-                                                            onProgramClick={handleProgramClick}
-                                                            loadingProgramId={loadingProgramId}
+                                                            programs={
+                                                                selectedPrograms
+                                                            }
+                                                            onProgramClick={
+                                                                handleProgramClick
+                                                            }
+                                                            loadingProgramId={
+                                                                loadingProgramId
+                                                            }
                                                             showHeader={false}
                                                         />
                                                     )}
@@ -657,7 +823,6 @@ export default function PRCCheckLanding() {
                         </Card>
                     </div>
                 )}
-
             </main>
 
             <div id="about">

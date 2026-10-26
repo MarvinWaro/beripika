@@ -9,10 +9,16 @@ import type { SharedData } from '@/types';
 export function useSessionFlash(): void {
     useEffect(() => {
         return router.on('success', (event) => {
-            const flash = (event.detail.page.props as unknown as SharedData).flash;
+            const flash = (event.detail.page.props as unknown as SharedData)
+                .flash;
             if (flash?.success) {
                 const sticky = flash.success.includes('password');
-                toast.success(flash.success, sticky ? { duration: Infinity, closeButton: true } : undefined);
+                toast.success(
+                    flash.success,
+                    sticky
+                        ? { duration: Infinity, closeButton: true }
+                        : undefined,
+                );
             }
             if (flash?.error) {
                 toast.error(flash.error);

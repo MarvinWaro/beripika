@@ -16,7 +16,14 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, School, BookOpen, Calendar, MessageSquareWarning, X } from 'lucide-react';
+import {
+    Search,
+    School,
+    BookOpen,
+    Calendar,
+    MessageSquareWarning,
+    X,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
     Select,
@@ -52,9 +59,11 @@ const STATUS_LABELS: Record<ConcernStatus, string> = {
 };
 
 const STATUS_STYLES: Record<ConcernStatus, string> = {
-    pending: 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300',
+    pending:
+        'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300',
     in_progress: 'bg-sky-100 text-sky-800 dark:bg-sky-500/15 dark:text-sky-300',
-    resolved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300',
+    resolved:
+        'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300',
     dismissed: 'bg-muted text-muted-foreground',
 };
 
@@ -80,13 +89,26 @@ interface Props {
     statuses: ConcernStatus[];
 }
 
-export default function ConcernsIndex({ concerns, filters, statusCounts, statuses }: Props) {
+export default function ConcernsIndex({
+    concerns,
+    filters,
+    statusCounts,
+    statuses,
+}: Props) {
     const { can } = usePermissions();
     const canUpdate = can('update_concerns');
     const setStatus = (concern: Concern, status: ConcernStatus) =>
-        router.patch(`/concerns/${concern.id}`, { status }, { preserveScroll: true, preserveState: true });
+        router.patch(
+            `/concerns/${concern.id}`,
+            { status },
+            { preserveScroll: true, preserveState: true },
+        );
     const filterStatus = (status: ConcernStatus | null) =>
-        router.get('/concerns', { q: search || undefined, status: status ?? undefined }, { preserveScroll: true, preserveState: true });
+        router.get(
+            '/concerns',
+            { q: search || undefined, status: status ?? undefined },
+            { preserveScroll: true, preserveState: true },
+        );
     const [items, setItems] = useState<Concern[]>(concerns.data);
     const [total, setTotal] = useState<number>(
         concerns.total ?? concerns.data.length,
@@ -113,7 +135,7 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
         router.get(
             '/concerns',
             { q: undefined, status: filters.status ?? undefined },
-            { preserveScroll: true, preserveState: true }
+            { preserveScroll: true, preserveState: true },
         );
     };
 
@@ -123,13 +145,14 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
 
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-xl font-semibold tracking-tight">Concerns &amp; Issues</h1>
+                    <h1 className="text-xl font-semibold tracking-tight">
+                        Concerns &amp; Issues
+                    </h1>
                     <p className="text-sm text-muted-foreground">
                         {filters.q ? (
                             <>
                                 Showing {items.length} of {total} report
-                                {total !== 1 ? 's' : ''} matching "
-                                {filters.q}"
+                                {total !== 1 ? 's' : ''} matching "{filters.q}"
                             </>
                         ) : (
                             <>
@@ -154,19 +177,19 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
                         {/* Search Bar */}
                         <form onSubmit={onSearchSubmit} className="mb-4">
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     type="text"
                                     placeholder="Search by school, program, or concern details..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    className="pl-10 pr-10"
+                                    className="pr-10 pl-10"
                                 />
                                 {search && (
                                     <button
                                         type="button"
                                         onClick={clearSearch}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                        className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                                     >
                                         <X className="h-4 w-4" />
                                     </button>
@@ -178,7 +201,9 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
                         <div className="mb-4 flex flex-wrap gap-2">
                             <Button
                                 size="sm"
-                                variant={!filters.status ? 'default' : 'outline'}
+                                variant={
+                                    !filters.status ? 'default' : 'outline'
+                                }
                                 onClick={() => filterStatus(null)}
                             >
                                 All
@@ -187,25 +212,41 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
                                 <Button
                                     key={status}
                                     size="sm"
-                                    variant={filters.status === status ? 'default' : 'outline'}
+                                    variant={
+                                        filters.status === status
+                                            ? 'default'
+                                            : 'outline'
+                                    }
                                     onClick={() => filterStatus(status)}
                                 >
                                     {STATUS_LABELS[status]}
-                                    <span className="ml-1 text-xs opacity-70">{statusCounts[status] ?? 0}</span>
+                                    <span className="ml-1 text-xs opacity-70">
+                                        {statusCounts[status] ?? 0}
+                                    </span>
                                 </Button>
                             ))}
                         </div>
 
                         {/* Table */}
-                        <div className="rounded-md border overflow-x-auto">
+                        <div className="overflow-x-auto rounded-md border">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="min-w-[160px]">School / HEI</TableHead>
-                                        <TableHead className="min-w-[140px]">Program</TableHead>
-                                        <TableHead className="min-w-[200px]">Concern Details</TableHead>
-                                        <TableHead className="min-w-[150px]">Date Submitted</TableHead>
-                                        <TableHead className="min-w-[150px]">Status</TableHead>
+                                        <TableHead className="min-w-[160px]">
+                                            School / HEI
+                                        </TableHead>
+                                        <TableHead className="min-w-[140px]">
+                                            Program
+                                        </TableHead>
+                                        <TableHead className="min-w-[200px]">
+                                            Concern Details
+                                        </TableHead>
+                                        <TableHead className="min-w-[150px]">
+                                            Date Submitted
+                                        </TableHead>
+                                        <TableHead className="min-w-[150px]">
+                                            Status
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -213,7 +254,7 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
                                         <TableRow>
                                             <TableCell
                                                 colSpan={5}
-                                                className="text-center py-8 text-muted-foreground"
+                                                className="py-8 text-center text-muted-foreground"
                                             >
                                                 {filters.q
                                                     ? 'No concerns found for your search.'
@@ -222,25 +263,28 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
                                         </TableRow>
                                     ) : (
                                         items.map((item) => (
-                                            <TableRow key={item.id} className="hover:bg-muted/50 align-top">
+                                            <TableRow
+                                                key={item.id}
+                                                className="align-top hover:bg-muted/50"
+                                            >
                                                 <TableCell className="text-sm font-medium">
                                                     <div className="flex items-start gap-2">
-                                                        <School className="h-4 w-4 mt-0.5 text-blue-600 shrink-0" />
+                                                        <School className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
                                                         {item.school}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-sm">
                                                     <div className="flex items-start gap-2">
-                                                        <BookOpen className="h-4 w-4 mt-0.5 text-purple-600 shrink-0" />
+                                                        <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-purple-600" />
                                                         {item.program}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-sm text-foreground">
-                                                    <p className="whitespace-pre-wrap leading-relaxed">
+                                                    <p className="leading-relaxed whitespace-pre-wrap">
                                                         {item.concern}
                                                     </p>
                                                 </TableCell>
-                                                <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                                                <TableCell className="text-sm whitespace-nowrap text-muted-foreground">
                                                     <div className="flex items-center gap-2">
                                                         <Calendar className="h-3.5 w-3.5" />
                                                         {item.created_at}
@@ -250,27 +294,70 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
                                                     {canUpdate ? (
                                                         <Select
                                                             value={item.status}
-                                                            onValueChange={(value) => setStatus(item, value as ConcernStatus)}
+                                                            onValueChange={(
+                                                                value,
+                                                            ) =>
+                                                                setStatus(
+                                                                    item,
+                                                                    value as ConcernStatus,
+                                                                )
+                                                            }
                                                         >
-                                                            <SelectTrigger className={cn('h-8 w-36 border-0', STATUS_STYLES[item.status])}>
+                                                            <SelectTrigger
+                                                                className={cn(
+                                                                    'h-8 w-36 border-0',
+                                                                    STATUS_STYLES[
+                                                                        item
+                                                                            .status
+                                                                    ],
+                                                                )}
+                                                            >
                                                                 <SelectValue />
                                                             </SelectTrigger>
                                                             <SelectContent>
-                                                                {statuses.map((status) => (
-                                                                    <SelectItem key={status} value={status}>
-                                                                        {STATUS_LABELS[status]}
-                                                                    </SelectItem>
-                                                                ))}
+                                                                {statuses.map(
+                                                                    (
+                                                                        status,
+                                                                    ) => (
+                                                                        <SelectItem
+                                                                            key={
+                                                                                status
+                                                                            }
+                                                                            value={
+                                                                                status
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                STATUS_LABELS[
+                                                                                    status
+                                                                                ]
+                                                                            }
+                                                                        </SelectItem>
+                                                                    ),
+                                                                )}
                                                             </SelectContent>
                                                         </Select>
                                                     ) : (
-                                                        <span className={cn('rounded-md px-2 py-1 text-xs font-medium', STATUS_STYLES[item.status])}>
-                                                            {STATUS_LABELS[item.status]}
+                                                        <span
+                                                            className={cn(
+                                                                'rounded-md px-2 py-1 text-xs font-medium',
+                                                                STATUS_STYLES[
+                                                                    item.status
+                                                                ],
+                                                            )}
+                                                        >
+                                                            {
+                                                                STATUS_LABELS[
+                                                                    item.status
+                                                                ]
+                                                            }
                                                         </span>
                                                     )}
                                                     {item.resolved_by && (
                                                         <div className="mt-1 text-xs text-muted-foreground">
-                                                            by {item.resolved_by} · {item.resolved_at}
+                                                            by{' '}
+                                                            {item.resolved_by} ·{' '}
+                                                            {item.resolved_at}
                                                         </div>
                                                     )}
                                                 </TableCell>
@@ -292,19 +379,35 @@ export default function ConcernsIndex({ concerns, filters, statusCounts, statuse
                                     return (
                                         <Button
                                             key={idx}
-                                            variant={link.active ? 'default' : 'outline'}
+                                            variant={
+                                                link.active
+                                                    ? 'default'
+                                                    : 'outline'
+                                            }
                                             size="sm"
                                             disabled={!link.url}
                                             onClick={() => {
                                                 if (!link.url) return;
                                                 router.get(
                                                     link.url,
-                                                    { q: search || undefined, status: filters.status ?? undefined },
-                                                    { preserveScroll: true, preserveState: true }
+                                                    {
+                                                        q: search || undefined,
+                                                        status:
+                                                            filters.status ??
+                                                            undefined,
+                                                    },
+                                                    {
+                                                        preserveScroll: true,
+                                                        preserveState: true,
+                                                    },
                                                 );
                                             }}
                                         >
-                                            <span dangerouslySetInnerHTML={{ __html: label }} />
+                                            <span
+                                                dangerouslySetInnerHTML={{
+                                                    __html: label,
+                                                }}
+                                            />
                                         </Button>
                                     );
                                 })}

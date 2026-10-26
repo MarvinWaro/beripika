@@ -300,7 +300,7 @@ export default function GraduateIndex({
                             className="mb-4 flex flex-col gap-2 xl:flex-row xl:items-center"
                         >
                             <div className="relative min-w-0 flex-1">
-                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     type="text"
                                     aria-label="Search graduates"
@@ -343,7 +343,9 @@ export default function GraduateIndex({
                                 />
                                 <Select
                                     value={
-                                        filters.year ? String(filters.year) : ALL
+                                        filters.year
+                                            ? String(filters.year)
+                                            : ALL
                                     }
                                     onValueChange={(value) =>
                                         applyFilters({
@@ -392,9 +394,15 @@ export default function GraduateIndex({
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value={ALL}>All sexes</SelectItem>
-                                        <SelectItem value="MALE">Male</SelectItem>
-                                        <SelectItem value="FEMALE">Female</SelectItem>
+                                        <SelectItem value={ALL}>
+                                            All sexes
+                                        </SelectItem>
+                                        <SelectItem value="MALE">
+                                            Male
+                                        </SelectItem>
+                                        <SelectItem value="FEMALE">
+                                            Female
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <Button type="submit" className="h-10">
@@ -423,7 +431,7 @@ export default function GraduateIndex({
                         </form>
 
                         {/* Table */}
-                        <div className="rounded-md border overflow-x-auto">
+                        <div className="overflow-x-auto rounded-md border">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -450,7 +458,7 @@ export default function GraduateIndex({
                                         <TableRow>
                                             <TableCell
                                                 colSpan={14}
-                                                className="text-center py-8 text-muted-foreground"
+                                                className="py-8 text-center text-muted-foreground"
                                             >
                                                 {filters.q || hasFilters
                                                     ? 'No graduates match your search or filters.'
@@ -466,9 +474,7 @@ export default function GraduateIndex({
                                                 <TableCell className="text-sm">
                                                     {graduate.so_number ? (
                                                         <span className="font-medium text-blue-600">
-                                                            {
-                                                                graduate.so_number
-                                                            }
+                                                            {graduate.so_number}
                                                         </span>
                                                     ) : (
                                                         <span className="text-muted-foreground">
@@ -555,111 +561,118 @@ export default function GraduateIndex({
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex justify-end gap-2">
-                                                        {can('update_graduates') && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="flex items-center gap-1"
-                                                            onClick={() =>
-                                                                openEditDialog(
-                                                                    graduate,
-                                                                )
-                                                            }
-                                                        >
-                                                            <Edit2 className="h-4 w-4" />
-                                                            <span className="hidden md:inline">
-                                                                Edit
-                                                            </span>
-                                                        </Button>
+                                                        {can(
+                                                            'update_graduates',
+                                                        ) && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="flex items-center gap-1"
+                                                                onClick={() =>
+                                                                    openEditDialog(
+                                                                        graduate,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Edit2 className="h-4 w-4" />
+                                                                <span className="hidden md:inline">
+                                                                    Edit
+                                                                </span>
+                                                            </Button>
                                                         )}
 
                                                         {/* Delete popover (controlled) */}
-                                                        {can('delete_graduates') && (
-                                                        <Popover
-                                                            open={
-                                                                deleteOpenId ===
-                                                                graduate.id
-                                                            }
-                                                            onOpenChange={(
-                                                                open,
-                                                            ) =>
-                                                                setDeleteOpenId(
-                                                                    open
-                                                                        ? graduate.id
-                                                                        : null,
-                                                                )
-                                                            }
-                                                        >
-                                                            <PopoverTrigger asChild>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="flex items-center gap-1 text-red-600 hover:text-red-700"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4" />
-                                                                    <span className="hidden md:inline">
-                                                                        Remove
-                                                                    </span>
-                                                                </Button>
-                                                            </PopoverTrigger>
-                                                            <PopoverContent
-                                                                className="w-72 border border-red-100 shadow-lg dark:border-red-900"
-                                                                align="end"
+                                                        {can(
+                                                            'delete_graduates',
+                                                        ) && (
+                                                            <Popover
+                                                                open={
+                                                                    deleteOpenId ===
+                                                                    graduate.id
+                                                                }
+                                                                onOpenChange={(
+                                                                    open,
+                                                                ) =>
+                                                                    setDeleteOpenId(
+                                                                        open
+                                                                            ? graduate.id
+                                                                            : null,
+                                                                    )
+                                                                }
                                                             >
-                                                                <div className="flex items-start gap-3">
-                                                                    <div className="mt-0.5">
-                                                                        <AlertTriangle className="h-5 w-5 text-red-500" />
-                                                                    </div>
-                                                                    <div className="space-y-1">
-                                                                        <p className="text-sm font-semibold">
-                                                                            Delete
-                                                                            graduate
-                                                                        </p>
-                                                                        <p className="text-xs text-muted-foreground">
-                                                                            Delete{' '}
-                                                                            <span className="font-medium">
-                                                                                {
-                                                                                    graduate.first_name
-                                                                                }{' '}
-                                                                                {
-                                                                                    graduate.last_name
-                                                                                }
-                                                                            </span>
-                                                                            ? This
-                                                                            action
-                                                                            cannot
-                                                                            be
-                                                                            undone.
-                                                                        </p>
-                                                                        <div className="flex justify-end gap-2 pt-2">
-                                                                            <Button
-                                                                                variant="outline"
-                                                                                size="sm"
-                                                                                className="h-7 px-3 text-xs"
-                                                                                onClick={() =>
-                                                                                    setDeleteOpenId(
-                                                                                        null,
-                                                                                    )
-                                                                                }
-                                                                            >
-                                                                                Cancel
-                                                                            </Button>
-                                                                            <Button
-                                                                                size="sm"
-                                                                                className="h-7 px-3 text-xs bg-red-600 hover:bg-red-700"
-                                                                                onClick={() =>
-                                                                                    handleDelete(
-                                                                                        graduate.id,
-                                                                                    )
-                                                                                }
-                                                                            >
+                                                                <PopoverTrigger
+                                                                    asChild
+                                                                >
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="flex items-center gap-1 text-red-600 hover:text-red-700"
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                        <span className="hidden md:inline">
+                                                                            Remove
+                                                                        </span>
+                                                                    </Button>
+                                                                </PopoverTrigger>
+                                                                <PopoverContent
+                                                                    className="w-72 border border-red-100 shadow-lg dark:border-red-900"
+                                                                    align="end"
+                                                                >
+                                                                    <div className="flex items-start gap-3">
+                                                                        <div className="mt-0.5">
+                                                                            <AlertTriangle className="h-5 w-5 text-red-500" />
+                                                                        </div>
+                                                                        <div className="space-y-1">
+                                                                            <p className="text-sm font-semibold">
                                                                                 Delete
-                                                                            </Button>
+                                                                                graduate
+                                                                            </p>
+                                                                            <p className="text-xs text-muted-foreground">
+                                                                                Delete{' '}
+                                                                                <span className="font-medium">
+                                                                                    {
+                                                                                        graduate.first_name
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        graduate.last_name
+                                                                                    }
+                                                                                </span>
+                                                                                ?
+                                                                                This
+                                                                                action
+                                                                                cannot
+                                                                                be
+                                                                                undone.
+                                                                            </p>
+                                                                            <div className="flex justify-end gap-2 pt-2">
+                                                                                <Button
+                                                                                    variant="outline"
+                                                                                    size="sm"
+                                                                                    className="h-7 px-3 text-xs"
+                                                                                    onClick={() =>
+                                                                                        setDeleteOpenId(
+                                                                                            null,
+                                                                                        )
+                                                                                    }
+                                                                                >
+                                                                                    Cancel
+                                                                                </Button>
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    className="h-7 bg-red-600 px-3 text-xs hover:bg-red-700"
+                                                                                    onClick={() =>
+                                                                                        handleDelete(
+                                                                                            graduate.id,
+                                                                                        )
+                                                                                    }
+                                                                                >
+                                                                                    Delete
+                                                                                </Button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </PopoverContent>
-                                                        </Popover>
+                                                                </PopoverContent>
+                                                            </Popover>
                                                         )}
                                                     </div>
                                                 </TableCell>

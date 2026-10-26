@@ -18,11 +18,20 @@ function ring(cx: number, cy: number, r: number, seed: number): string {
     const pts: [number, number][] = [];
     for (let i = 0; i < steps; i++) {
         const t = (i / steps) * Math.PI * 2;
-        const wobble = 1 + 0.16 * Math.sin(3 * t + seed) + 0.07 * Math.sin(5 * t + seed * 1.7);
-        pts.push([cx + Math.cos(t) * r * wobble * 1.35, cy + Math.sin(t) * r * wobble]);
+        const wobble =
+            1 +
+            0.16 * Math.sin(3 * t + seed) +
+            0.07 * Math.sin(5 * t + seed * 1.7);
+        pts.push([
+            cx + Math.cos(t) * r * wobble * 1.35,
+            cy + Math.sin(t) * r * wobble,
+        ]);
     }
     // Smooth closed curve through midpoints (quadratic Béziers).
-    const mid = (a: [number, number], b: [number, number]) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const mid = (a: [number, number], b: [number, number]) => [
+        (a[0] + b[0]) / 2,
+        (a[1] + b[1]) / 2,
+    ];
     const start = mid(pts[steps - 1], pts[0]);
     let d = `M${start[0].toFixed(1)} ${start[1].toFixed(1)}`;
     for (let i = 0; i < steps; i++) {
@@ -39,22 +48,44 @@ const CONTOURS: string[] = [
     { x: 260, y: 520, rings: 7, seed: 2.1 },
     { x: 700, y: 430, rings: 5, seed: 4.3 },
 ].flatMap(({ x, y, rings, seed }) =>
-    Array.from({ length: rings }, (_, i) => ring(x, y, 34 + i * 30, seed + i * 0.35)),
+    Array.from({ length: rings }, (_, i) =>
+        ring(x, y, 34 + i * 30, seed + i * 0.35),
+    ),
 );
 
 /** `still` renders the same contours without the drift (used on sign-in screens). */
-export function TopoBackground({ className, still = false }: { className?: string; still?: boolean }) {
+export function TopoBackground({
+    className,
+    still = false,
+}: {
+    className?: string;
+    still?: boolean;
+}) {
     return (
-        <div aria-hidden className={cn('landing-topo pointer-events-none absolute inset-0 overflow-hidden', className)}>
+        <div
+            aria-hidden
+            className={cn(
+                'landing-topo pointer-events-none absolute inset-0 overflow-hidden',
+                className,
+            )}
+        >
             <svg
-                className={cn('landing-topo-layer h-[120%] w-[120%] -translate-x-[8%] -translate-y-[8%]', still && 'is-still')}
+                className={cn(
+                    'landing-topo-layer h-[120%] w-[120%] -translate-x-[8%] -translate-y-[8%]',
+                    still && 'is-still',
+                )}
                 viewBox="0 0 1200 640"
                 preserveAspectRatio="xMidYMid slice"
                 fill="none"
                 stroke="currentColor"
             >
                 {CONTOURS.map((d, i) => (
-                    <path key={i} d={d} strokeWidth={i % 4 === 0 ? 1.2 : 0.7} vectorEffect="non-scaling-stroke" />
+                    <path
+                        key={i}
+                        d={d}
+                        strokeWidth={i % 4 === 0 ? 1.2 : 0.7}
+                        vectorEffect="non-scaling-stroke"
+                    />
                 ))}
             </svg>
         </div>
@@ -63,12 +94,25 @@ export function TopoBackground({ className, still = false }: { className?: strin
 
 /* ───────── Split headline reveal ───────── */
 
-export function RevealHeadline({ lines, className }: { lines: string[]; className?: string }) {
+export function RevealHeadline({
+    lines,
+    className,
+}: {
+    lines: string[];
+    className?: string;
+}) {
     return (
         <h1 className={className} aria-label={lines.join(' ')}>
             {lines.map((line, i) => (
-                <span key={i} aria-hidden className="block overflow-hidden pb-[0.08em]">
-                    <span className="landing-rise inline-block" style={{ animationDelay: `${120 + i * 110}ms` }}>
+                <span
+                    key={i}
+                    aria-hidden
+                    className="block overflow-hidden pb-[0.08em]"
+                >
+                    <span
+                        className="landing-rise inline-block"
+                        style={{ animationDelay: `${120 + i * 110}ms` }}
+                    >
                         {line}
                     </span>
                 </span>
@@ -79,7 +123,13 @@ export function RevealHeadline({ lines, className }: { lines: string[]; classNam
 
 /* ───────── Floating verification chips ───────── */
 
-const CHIPS: { icon: ReactNode; title: string; text: string; className: string; delay: string }[] = [
+const CHIPS: {
+    icon: ReactNode;
+    title: string;
+    text: string;
+    className: string;
+    delay: string;
+}[] = [
     {
         icon: <CheckCircle2 className="size-4 text-success" />,
         title: 'GR / COPC verified',
@@ -106,7 +156,10 @@ const CHIPS: { icon: ReactNode; title: string; text: string; className: string; 
 /** Decorative only — describes features, never shows sample permit data. */
 export function FloatingChips() {
     return (
-        <div aria-hidden className="pointer-events-none absolute inset-0 hidden xl:block">
+        <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 hidden xl:block"
+        >
             {CHIPS.map((chip) => (
                 <div
                     key={chip.title}
@@ -130,10 +183,17 @@ export function FloatingChips() {
 /* ───────── Count up ───────── */
 
 const prefersReducedMotion = () =>
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Counts from 0 to `value` once it is known and on screen (~1.1 s, ease-out). */
-export function CountUp({ value, suffix = '' }: { value: number | null; suffix?: string }) {
+export function CountUp({
+    value,
+    suffix = '',
+}: {
+    value: number | null;
+    suffix?: string;
+}) {
     const ref = useRef<HTMLSpanElement>(null);
     const [shown, setShown] = useState<number | null>(null);
 
@@ -175,7 +235,13 @@ export function CountUp({ value, suffix = '' }: { value: number | null; suffix?:
 /* ───────── Scroll reveal ───────── */
 
 /** Fades + lifts its children the first time they scroll into view. */
-export function Reveal({ children, className }: { children: ReactNode; className?: string }) {
+export function Reveal({
+    children,
+    className,
+}: {
+    children: ReactNode;
+    className?: string;
+}) {
     const ref = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState(false);
 
@@ -202,7 +268,10 @@ export function Reveal({ children, className }: { children: ReactNode; className
     }, []);
 
     return (
-        <div ref={ref} className={cn('landing-reveal', visible && 'is-visible', className)}>
+        <div
+            ref={ref}
+            className={cn('landing-reveal', visible && 'is-visible', className)}
+        >
             {children}
         </div>
     );

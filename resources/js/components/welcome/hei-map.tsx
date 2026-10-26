@@ -57,13 +57,20 @@ interface HeiMapProps {
 const CHED_OFFICE = { lat: 6.4522717, lng: 124.8781319 };
 
 const BASEMAPS = {
-    streets: { label: 'Streets', url: 'https://tiles.openfreemap.org/styles/liberty' },
-    light: { label: 'Light', url: 'https://tiles.openfreemap.org/styles/positron' },
+    streets: {
+        label: 'Streets',
+        url: 'https://tiles.openfreemap.org/styles/liberty',
+    },
+    light: {
+        label: 'Light',
+        url: 'https://tiles.openfreemap.org/styles/positron',
+    },
     dark: { label: 'Dark', url: 'https://tiles.openfreemap.org/styles/dark' },
 } as const;
 type BasemapKey = keyof typeof BASEMAPS;
 
-const TERRAIN_TILES = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
+const TERRAIN_TILES =
+    'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
 
 const PROVINCE_CONFIG = {
     cotabato: { label: 'Cotabato', color: '#22c55e' },
@@ -80,7 +87,8 @@ function getProvinceKey(hei: HeiLocation): ProvinceKey {
     const city = (hei.municipalityCity ?? '').toUpperCase().trim();
 
     if (p.includes('COTABATO') && !p.includes('SOUTH')) return 'cotabato';
-    if (p.includes('SOUTH COTABATO') || city.includes('GENERAL SANTOS')) return 'south_cotabato';
+    if (p.includes('SOUTH COTABATO') || city.includes('GENERAL SANTOS'))
+        return 'south_cotabato';
     if (p.includes('SULTAN KUDARAT')) return 'sultan_kudarat';
     if (p.includes('SARANGANI')) return 'sarangani';
 
@@ -88,7 +96,12 @@ function getProvinceKey(hei: HeiLocation): ProvinceKey {
 }
 
 /** Haversine distance in kilometres. */
-function computeDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+function computeDistanceKm(
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number,
+): number {
     const R = 6371;
     const toRad = (deg: number) => (deg * Math.PI) / 180;
     const dLat = toRad(lat2 - lat1);
@@ -103,12 +116,16 @@ function computeDistanceKm(lat1: number, lng1: number, lat2: number, lng2: numbe
 /** Tracks the `dark` class on <html> so the basemap follows the theme toggle. */
 function useIsDark(): boolean {
     const [dark, setDark] = useState(
-        () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
+        () =>
+            typeof document !== 'undefined' &&
+            document.documentElement.classList.contains('dark'),
     );
 
     useEffect(() => {
         const el = document.documentElement;
-        const observer = new MutationObserver(() => setDark(el.classList.contains('dark')));
+        const observer = new MutationObserver(() =>
+            setDark(el.classList.contains('dark')),
+        );
         observer.observe(el, { attributes: true, attributeFilter: ['class'] });
 
         return () => observer.disconnect();
@@ -162,7 +179,10 @@ const hillshadeLayer: LayerProps = {
     id: 'terrain-hillshade',
     type: 'hillshade',
     source: 'terrain-dem',
-    paint: { 'hillshade-exaggeration': 0.35, 'hillshade-shadow-color': '#3d3d3d' },
+    paint: {
+        'hillshade-exaggeration': 0.35,
+        'hillshade-shadow-color': '#3d3d3d',
+    },
 };
 
 export default function HeiMap({
@@ -189,10 +209,17 @@ export default function HeiMap({
             type: 'FeatureCollection',
             features: heis
                 .map((hei, index) => ({ hei, index }))
-                .filter(({ hei }) => Number.isFinite(hei.latitude) && Number.isFinite(hei.longitude))
+                .filter(
+                    ({ hei }) =>
+                        Number.isFinite(hei.latitude) &&
+                        Number.isFinite(hei.longitude),
+                )
                 .map(({ hei, index }) => ({
                     type: 'Feature' as const,
-                    geometry: { type: 'Point' as const, coordinates: [hei.longitude, hei.latitude] },
+                    geometry: {
+                        type: 'Point' as const,
+                        coordinates: [hei.longitude, hei.latitude],
+                    },
                     properties: {
                         index,
                         code: hei.instCode,
@@ -216,7 +243,11 @@ export default function HeiMap({
             ];
             map.fitBounds(bounds, { padding: 60, duration: 1500, maxZoom: 13 });
         } else if (focusLocation) {
-            map.flyTo({ center: [focusLocation.lng, focusLocation.lat], zoom: 14, duration: 1500 });
+            map.flyTo({
+                center: [focusLocation.lng, focusLocation.lat],
+                zoom: 14,
+                duration: 1500,
+            });
         }
     }, [focusLocation, fitLocations]);
 
@@ -234,11 +265,17 @@ export default function HeiMap({
         }
 
         if (feature.layer.id === 'hei-clusters') {
-            const source = mapRef.current?.getSource('heis') as GeoJSONSource | undefined;
+            const source = mapRef.current?.getSource('heis') as
+                | GeoJSONSource
+                | undefined;
             const clusterId = feature.properties?.cluster_id as number;
             const nextZoom = await source?.getClusterExpansionZoom(clusterId);
             const [lng, lat] = (feature.geometry as Point).coordinates;
-            mapRef.current?.easeTo({ center: [lng, lat], zoom: (nextZoom ?? 10) + 0.5, duration: 600 });
+            mapRef.current?.easeTo({
+                center: [lng, lat],
+                zoom: (nextZoom ?? 10) + 0.5,
+                duration: 600,
+            });
 
             return;
         }
@@ -250,7 +287,12 @@ export default function HeiMap({
 
     const selectedHei = typeof selected === 'number' ? heis[selected] : null;
     const distanceKm = selectedHei
-        ? computeDistanceKm(CHED_OFFICE.lat, CHED_OFFICE.lng, selectedHei.latitude, selectedHei.longitude)
+        ? computeDistanceKm(
+              CHED_OFFICE.lat,
+              CHED_OFFICE.lng,
+              selectedHei.latitude,
+              selectedHei.longitude,
+          )
         : null;
 
     return (
@@ -269,7 +311,11 @@ export default function HeiMap({
                 onMouseEnter={() => setCursor('pointer')}
                 onMouseLeave={() => setCursor('')}
                 cursor={cursor}
-                terrain={terrain ? { source: 'terrain-dem', exaggeration: 1.4 } : undefined}
+                terrain={
+                    terrain
+                        ? { source: 'terrain-dem', exaggeration: 1.4 }
+                        : undefined
+                }
                 maxPitch={70}
                 attributionControl={{ compact: true }}
                 cooperativeGestures={false}
@@ -312,7 +358,10 @@ export default function HeiMap({
                         setSelected('ched');
                     }}
                 >
-                    <div className="hei-marker cursor-pointer" title="CHED Regional Office XII">
+                    <div
+                        className="hei-marker cursor-pointer"
+                        title="CHED Regional Office XII"
+                    >
                         <div className="hei-pin hei-pin-ched" />
                     </div>
                 </Marker>
@@ -327,10 +376,15 @@ export default function HeiMap({
                         closeOnClick={false}
                     >
                         <div className="space-y-1 pr-4">
-                            <p className="text-sm font-semibold">CHED Regional Office XII</p>
-                            <p className="text-xs text-gray-600">Reference point for distance to HEIs.</p>
+                            <p className="text-sm font-semibold">
+                                CHED Regional Office XII
+                            </p>
+                            <p className="text-xs text-gray-600">
+                                Reference point for distance to HEIs.
+                            </p>
                             <p className="num text-xs text-gray-500">
-                                {CHED_OFFICE.lat.toFixed(5)}, {CHED_OFFICE.lng.toFixed(5)}
+                                {CHED_OFFICE.lat.toFixed(5)},{' '}
+                                {CHED_OFFICE.lng.toFixed(5)}
                             </p>
                         </div>
                     </Popup>
@@ -347,32 +401,46 @@ export default function HeiMap({
                         maxWidth="280px"
                     >
                         <div className="space-y-1 pr-4">
-                            <p className="text-sm font-semibold leading-snug">{selectedHei.instName}</p>
+                            <p className="text-sm leading-snug font-semibold">
+                                {selectedHei.instName}
+                            </p>
                             <p className="text-xs text-gray-600">
-                                Code: <span className="num">{selectedHei.instCode}</span>
+                                Code:{' '}
+                                <span className="num">
+                                    {selectedHei.instCode}
+                                </span>
                             </p>
                             {selectedHei.municipalityCity && (
                                 <p className="text-xs text-gray-600">
                                     {selectedHei.municipalityCity}
-                                    {selectedHei.province ? `, ${selectedHei.province}` : ''}
+                                    {selectedHei.province
+                                        ? `, ${selectedHei.province}`
+                                        : ''}
                                 </p>
                             )}
-                            {distanceKm !== null && Number.isFinite(distanceKm) && (
-                                <p className="text-xs text-gray-600">
-                                    Distance from CHED XII RO:{' '}
-                                    <span className="font-semibold">{distanceKm.toFixed(1)} km</span>
-                                </p>
-                            )}
+                            {distanceKm !== null &&
+                                Number.isFinite(distanceKm) && (
+                                    <p className="text-xs text-gray-600">
+                                        Distance from CHED XII RO:{' '}
+                                        <span className="font-semibold">
+                                            {distanceKm.toFixed(1)} km
+                                        </span>
+                                    </p>
+                                )}
                             {selectedHei.ownershipSector && (
                                 <p className="text-xs text-gray-600">
                                     Sector: {selectedHei.ownershipSector}
-                                    {selectedHei.ownershipHei_type ? ` (${selectedHei.ownershipHei_type})` : ''}
+                                    {selectedHei.ownershipHei_type
+                                        ? ` (${selectedHei.ownershipHei_type})`
+                                        : ''}
                                 </p>
                             )}
                             {onHeiClick && (
                                 <button
                                     type="button"
-                                    onClick={() => onHeiClick(selectedHei.instCode)}
+                                    onClick={() =>
+                                        onHeiClick(selectedHei.instCode)
+                                    }
                                     className="mt-2 inline-flex items-center rounded-(--radius-button) bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
                                 >
                                     Search this HEI
@@ -429,7 +497,9 @@ export default function HeiMap({
                 {legendVisible ? (
                     <div className="w-60 rounded-(--radius-card) bg-white/95 p-4 text-[11px] shadow-lg ring-1 ring-black/5 backdrop-blur dark:bg-gray-900/95 dark:ring-white/10">
                         <div className="mb-2 flex items-center justify-between">
-                            <p className="font-semibold text-gray-800 dark:text-gray-100">Legend (by Province)</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-100">
+                                Legend (by Province)
+                            </p>
                             <button
                                 type="button"
                                 onClick={() => setLegendVisible(false)}
@@ -439,11 +509,24 @@ export default function HeiMap({
                             </button>
                         </div>
                         <ul className="space-y-1 text-gray-600 dark:text-gray-400">
-                            {(['cotabato', 'sultan_kudarat', 'south_cotabato', 'sarangani'] as ProvinceKey[]).map((key) => (
-                                <li key={key} className="flex items-center gap-2">
+                            {(
+                                [
+                                    'cotabato',
+                                    'sultan_kudarat',
+                                    'south_cotabato',
+                                    'sarangani',
+                                ] as ProvinceKey[]
+                            ).map((key) => (
+                                <li
+                                    key={key}
+                                    className="flex items-center gap-2"
+                                >
                                     <span
                                         className="inline-block size-2.5 rounded-full ring-2 ring-white dark:ring-gray-900"
-                                        style={{ backgroundColor: PROVINCE_CONFIG[key].color }}
+                                        style={{
+                                            backgroundColor:
+                                                PROVINCE_CONFIG[key].color,
+                                        }}
                                     />
                                     <span>{PROVINCE_CONFIG[key].label}</span>
                                 </li>
@@ -456,7 +539,9 @@ export default function HeiMap({
                                 <span className="inline-grid size-4 place-items-center rounded-full bg-[#0f62fe] text-[8px] font-bold text-white">
                                     3
                                 </span>
-                                <span>Group of nearby HEIs — click to zoom</span>
+                                <span>
+                                    Group of nearby HEIs — click to zoom
+                                </span>
                             </li>
                         </ul>
                     </div>
@@ -489,9 +574,12 @@ export default function HeiMap({
                         <MapPin className="size-10 text-primary" />
                     </div>
                     <div className="space-y-1">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">HEI Map</p>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                            HEI Map
+                        </p>
                         <p className="max-w-xs text-xs text-gray-600 dark:text-gray-400">
-                            No HEI coordinates available yet. Markers appear once the portal returns locations.
+                            No HEI coordinates available yet. Markers appear
+                            once the portal returns locations.
                         </p>
                     </div>
                 </div>

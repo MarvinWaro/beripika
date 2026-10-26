@@ -179,107 +179,158 @@ export default function EditGraduateDialog({
                 <DialogHeader>
                     <DialogTitle>Edit Graduate</DialogTitle>
                     <DialogDescription>
-                        Update basic information for this graduate. Changes are saved immediately to
-                        the database.
+                        Update basic information for this graduate. Changes are
+                        saved immediately to the database.
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-3 mt-2">
+                <div className="mt-2 space-y-3">
                     {/* Names */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                         <div>
-                            <label className="text-xs font-medium text-foreground">Last Name</label>
+                            <label className="text-xs font-medium text-foreground">
+                                Last Name
+                            </label>
                             <Input
                                 value={form.last_name}
-                                onChange={(e) => handleChange('last_name', e.target.value)}
+                                onChange={(e) =>
+                                    handleChange('last_name', e.target.value)
+                                }
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-medium text-foreground">First Name</label>
+                            <label className="text-xs font-medium text-foreground">
+                                First Name
+                            </label>
                             <Input
                                 value={form.first_name}
-                                onChange={(e) => handleChange('first_name', e.target.value)}
+                                onChange={(e) =>
+                                    handleChange('first_name', e.target.value)
+                                }
                             />
                         </div>
                     </div>
 
                     {/* Middle / Ext / Sex */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                         <div>
-                            <label className="text-xs font-medium text-foreground">Middle Name</label>
+                            <label className="text-xs font-medium text-foreground">
+                                Middle Name
+                            </label>
                             <Input
                                 value={form.middle_name}
-                                onChange={(e) => handleChange('middle_name', e.target.value)}
+                                onChange={(e) =>
+                                    handleChange('middle_name', e.target.value)
+                                }
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-medium text-foreground">Extension</label>
+                            <label className="text-xs font-medium text-foreground">
+                                Extension
+                            </label>
                             <Input
                                 value={form.extension_name}
-                                onChange={(e) => handleChange('extension_name', e.target.value)}
+                                onChange={(e) =>
+                                    handleChange(
+                                        'extension_name',
+                                        e.target.value,
+                                    )
+                                }
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-medium text-foreground">Sex</label>
+                            <label className="text-xs font-medium text-foreground">
+                                Sex
+                            </label>
                             <Select
                                 value={form.sex || ''}
-                                onValueChange={(value) => handleChange('sex', value)}
+                                onValueChange={(value) =>
+                                    handleChange('sex', value)
+                                }
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select sex" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="MALE">MALE</SelectItem>
-                                    <SelectItem value="FEMALE">FEMALE</SelectItem>
+                                    <SelectItem value="FEMALE">
+                                        FEMALE
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
 
                     {/* Dates */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                         <div>
-                            <label className="text-xs font-medium text-foreground">Date Graduated</label>
+                            <label className="text-xs font-medium text-foreground">
+                                Date Graduated
+                            </label>
                             <Input
                                 type="date"
                                 value={form.date_graduated}
-                                onChange={(e) => handleChange('date_graduated', e.target.value)}
+                                onChange={(e) =>
+                                    handleChange(
+                                        'date_graduated',
+                                        e.target.value,
+                                    )
+                                }
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-medium text-foreground">Academic Year</label>
+                            <label className="text-xs font-medium text-foreground">
+                                Academic Year
+                            </label>
                             <Input
                                 placeholder="e.g. 2023-2024"
                                 value={form.academic_year}
-                                onChange={(e) => handleChange('academic_year', e.target.value)}
+                                onChange={(e) =>
+                                    handleChange(
+                                        'academic_year',
+                                        e.target.value,
+                                    )
+                                }
                             />
                         </div>
                     </div>
 
                     {/* SO number – full width */}
                     <div>
-                        <label className="text-xs font-medium text-foreground">SO Number</label>
+                        <label className="text-xs font-medium text-foreground">
+                            SO Number
+                        </label>
                         <Input
                             value={form.so_number}
-                            onChange={(e) => handleChange('so_number', e.target.value)}
+                            onChange={(e) =>
+                                handleChange('so_number', e.target.value)
+                            }
                         />
                     </div>
 
                     {/* Program – full width */}
                     <div>
-                        <label className="text-xs font-medium text-foreground">Program</label>
+                        <label className="text-xs font-medium text-foreground">
+                            Program
+                        </label>
                         <Input
                             value={form.program_name}
-                            onChange={(e) => handleChange('program_name', e.target.value)}
+                            onChange={(e) =>
+                                handleChange('program_name', e.target.value)
+                            }
                         />
                     </div>
 
                     {/* Major – full width */}
                     <div>
-                        <label className="text-xs font-medium text-foreground">Major</label>
+                        <label className="text-xs font-medium text-foreground">
+                            Major
+                        </label>
                         <Input
                             value={form.major}
-                            onChange={(e) => handleChange('major', e.target.value)}
+                            onChange={(e) =>
+                                handleChange('major', e.target.value)
+                            }
                         />
                     </div>
                 </div>

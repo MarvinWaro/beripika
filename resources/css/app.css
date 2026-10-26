@@ -17,7 +17,8 @@
     --font-sans:
         var(--font-ui), ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
         Roboto, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-    --font-mono: var(--font-code), ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-mono:
+        var(--font-code), ui-monospace, SFMono-Regular, Menlo, monospace;
 
     --radius-sm: var(--r-sm);
     --radius-md: var(--r-md);
@@ -460,8 +461,8 @@ html:not(.theme-coinbase) {
     width: 18px;
     height: 18px;
     position: relative;
-    border-radius: 50% 50% 50% 0;        /* circle with one sharp corner */
-    transform: rotate(-45deg);           /* sharp corner points down = pin tip */
+    border-radius: 50% 50% 50% 0; /* circle with one sharp corner */
+    transform: rotate(-45deg); /* sharp corner points down = pin tip */
     box-shadow:
         0 0 0 2px rgba(255, 255, 255, 0.9),
         0 4px 8px rgba(15, 23, 42, 0.35);
@@ -599,7 +600,11 @@ html:not(.theme-coinbase) {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse 80% 75% at 60% 40%, transparent 35%, var(--color-gray-950) 82%);
+    background: radial-gradient(
+        ellipse 80% 75% at 60% 40%,
+        transparent 35%,
+        var(--color-gray-950) 82%
+    );
 }
 
 .landing-topo-layer {

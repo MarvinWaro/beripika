@@ -64,7 +64,7 @@ export default function SearchInstitutionCard({
                         value={searchTerm}
                         onChange={(e) => onSearchTermChange(e.target.value)}
                         disabled={isSearching}
-                        className="h-14 w-full rounded-(--radius-button) border border-transparent bg-muted pr-5 pl-13 text-base outline-none transition placeholder:text-muted-foreground focus:border-primary focus:bg-background focus:ring-4 focus:ring-primary/15 disabled:opacity-60"
+                        className="h-14 w-full rounded-(--radius-button) border border-transparent bg-muted pr-5 pl-13 text-base transition outline-none placeholder:text-muted-foreground focus:border-primary focus:bg-background focus:ring-4 focus:ring-primary/15 disabled:opacity-60"
                     />
                 </label>
 
@@ -87,7 +87,9 @@ export default function SearchInstitutionCard({
                 {searchMessage && (
                     <div
                         id="institution-search-message"
-                        role={searchMessageType === 'error' ? 'alert' : 'status'}
+                        role={
+                            searchMessageType === 'error' ? 'alert' : 'status'
+                        }
                         aria-live="polite"
                         className={`rounded-(--radius-card) px-4 py-3 text-sm ${
                             searchMessageType === 'error'

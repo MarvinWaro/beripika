@@ -9,18 +9,21 @@ showing actions, pages declare breadcrumbs with `Page.layout = { breadcrumbs: [.
 `npm run types:check` and `php artisan test` before merging.
 
 ## Session 1 — Shell & branding (`feat/ui-shell`)
+
 Owns: `resources/css/app.css`, `layouts/**`, `components/app-*`, `nav-*`, `user-*`, `app-logo*`,
 `pages/welcome.tsx`, `components/welcome/**`, `pages/auth/**`, `pages/settings/**`.
 Goal: Beripika brand (colors, logo, typography, dark mode), polished sidebar/header, public
 verification page (search + map + permit dialog), login.
 
 ## Session 2 — Records pages (`feat/ui-records`)
+
 Owns: `pages/dashboard.tsx`, `pages/institution/**`, `pages/programs/**`, `pages/graduates/**`,
 `components/dashboard/**`, `components/graduates/**`, `components/admin-institution/**`.
 Goal: modern dashboard cards/charts, faster tables (filters, empty states, mobile), a clean
 graduate verification view for external verifiers.
 
 ## Session 3 — Admin pages (`feat/ui-admin`)
+
 Owns: `pages/users/**`, `pages/roles/**`, `pages/import/**`, `pages/concerns/**`, `pages/logs/**`,
 `components/graduate-import*`.
 Goal: consistent admin tables, user/role dialogs, import progress UX, concern status workflow,
