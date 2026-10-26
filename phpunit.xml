@@ -32,5 +32,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- Never call the real CHED portal from tests; PortalService falls back without a key. -->
+        <env name="PORTAL_API" value=""/>
     </php>
 </phpunit>
