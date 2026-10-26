@@ -6,7 +6,7 @@ export default function WelcomeHero({
     stats?: { institutions: number; programs: number };
 }) {
     return (
-        <section className="mb-6 mt-2 grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+        <section className="mt-2 mb-6 grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
             {/* Left side: title */}
             <div className="lg:col-span-8">
                 <div className="mb-3 flex items-center gap-3">
@@ -18,7 +18,7 @@ export default function WelcomeHero({
                         />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white md:text-3xl">
+                        <h1 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-white">
                             Commission on Higher Education
                         </h1>
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -27,11 +27,12 @@ export default function WelcomeHero({
                     </div>
                 </div>
 
-                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-blue-900 dark:text-blue-300 md:text-5xl">
+                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-blue-900 md:text-5xl dark:text-blue-300">
                     CHECK with CHED
                 </h2>
                 <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
-                    Verify institutional programs and permits quickly and securely.
+                    Verify institutional programs and permits quickly and
+                    securely.
                 </p>
             </div>
 

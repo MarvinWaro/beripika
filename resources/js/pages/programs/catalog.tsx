@@ -580,7 +580,7 @@ export default function ProgramCatalogIndex({
 
 ProgramCatalogIndex.layout = {
     breadcrumbs: [
-                { title: 'Dashboard', href: '/dashboard' },
-                { title: 'Program Catalog', href: '/programs/catalog' },
-            ],
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Program Catalog', href: '/programs/catalog' },
+    ],
 };

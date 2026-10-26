@@ -1,0 +1,1015 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Anonymous function should return non\-empty\-array\|null but returns non\-empty\-array\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Console/Commands/ImportLegacyData.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\ImportLegacyData\:\:copy\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Console/Commands/ImportLegacyData.php
+
+		-
+			message: '#^Parameter \#1 \$name of static method Illuminate\\Database\\DatabaseManager\:\:connection\(\) expects string\|UnitEnum\|null, array\|bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/ImportLegacyData.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<\(int\|string\), mixed\>\|iterable\<\(int\|string\), mixed\>\|null, non\-empty\-array\|float\|int\<min, \-1\>\|int\<1, max\>\|non\-falsy\-string\|true given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/ImportLegacyData.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of function in_array expects array, array\|float\|int\<min, \-1\>\|int\<1, max\>\|string\|true given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/ImportLegacyData.php
+
+		-
+			message: '#^Property App\\Console\\Commands\\ImportLegacyData\:\:\$roleMap is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: app/Console/Commands/ImportLegacyData.php
+
+		-
+			message: '#^Parameter \#2 \$retry of method App\\Services\\CatalogSyncService\:\:start\(\) expects App\\Models\\CatalogSyncRun\|null, App\\Models\\CatalogSyncRun\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\CatalogSyncRun\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/SyncProgramCatalog.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ActivityLogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ActivityLogController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ActivityLogController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ActivityLogController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\ActivityLog\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/ActivityLogController.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\ActivityLog\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Http/Controllers/ActivityLogController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/ActivityLogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ConcernController.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ConcernController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ConcernController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ConcernController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ConcernController\:\:store\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ConcernController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ConcernController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ConcernController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Concern\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/ConcernController.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Concern\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Http/Controllers/ConcernController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$major\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$program_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$program_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\DashboardController\:\:getGraduateDetails\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\DashboardController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\DashboardController\:\:searchGraduates\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>program_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$institution\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$institution_code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$major\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$permit_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$program_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateController\:\:destroy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Graduate\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Graduate\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>institution_code" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>major" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>program_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>type" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Http/Controllers/GraduateController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateImportController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateImportController\:\:issues\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateImportController\:\:process\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateImportController\:\:retry\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateImportController\:\:review\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateImportController\:\:show\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\GraduateImportController\:\:store\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fputcsv expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/GraduateImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ImportController\:\:clearGraduateRecords\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ImportController\:\:clearGraduates\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ImportController\:\:clearInstitutions\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ImportController\:\:importInstitutions\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ImportController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\InstitutionController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/InstitutionController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\PermitPdfProxyController\:\:fetchPdfFromPortal\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/PermitPdfProxyController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\PermitPdfProxyController\:\:proxy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/PermitPdfProxyController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProgramCatalogController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProgramCatalogController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProgramCatalogController\:\:startSync\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProgramCatalogController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProgramCatalogController\:\:syncStatus\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProgramCatalogController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProgramCatalogController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProgramCatalogController.php
+
+		-
+			message: '#^Parameter \#2 \$retry of method App\\Services\\CatalogSyncService\:\:start\(\) expects App\\Models\\CatalogSyncRun\|null, App\\Models\\CatalogSyncRun\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\CatalogSyncRun\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/ProgramCatalogController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProgramController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProgramController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProgramController\:\:refresh\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProgramController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoleController\:\:permissionGroups\(\) should return list\<array\{group\: string, label\: string, permissions\: list\<array\{id\: int, name\: string, display_name\: string, description\: string\|null\}\>\}\> but returns array\<int, array\{group\: \(int\|string\), label\: string, permissions\: array\<int, array\{id\: int, name\: string, display_name\: string, description\: string\|null\}\>\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/RoleController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\RoleController\:\:validated\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/RoleController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\UserController\:\:assignableRoles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/UserController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Program\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Program\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Program\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Program\>\:\:\$major\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Program\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Program\>\:\:\$program_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Program\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Program\>\:\:\$program_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$institution_code\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:extractStatus\(\) has parameter \$record with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:getInstitutionPrograms\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:getInstitutionsList\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:getProgram\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:getProgram\(\) has parameter \$programId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:searchInstitution\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:searchStudent\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Offset ''permit_number'' on array\{program_name\: non\-empty\-string, major\: string\|null, permit_number\: non\-falsy\-string, filename\: string\|null, status\: string\} in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.offset
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Parameter \#2 \$values of method Illuminate\\Http\\JsonResponse\:\:header\(\) expects array\|string, int\<0, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 2
+			path: app/Http/Controllers/WelcomeController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Jobs/InitializeCatalogSync.php
+
+		-
+			message: '#^Method App\\Models\\ActivityLog\:\:record\(\) has parameter \$properties with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/ActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\ActivityLog\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\CatalogSyncRun\:\:schools\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CatalogSyncRun.php
+
+		-
+			message: '#^Method App\\Models\\Concern\:\:resolver\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Concern.php
+
+		-
+			message: '#^Method App\\Models\\Graduate\:\:institution\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Graduate.php
+
+		-
+			message: '#^Method App\\Models\\Graduate\:\:program\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Graduate.php
+
+		-
+			message: '#^Method App\\Models\\GraduateImport\:\:chunks\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/GraduateImport.php
+
+		-
+			message: '#^Method App\\Models\\Institution\:\:graduates\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Institution.php
+
+		-
+			message: '#^Method App\\Models\\Institution\:\:programs\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Institution.php
+
+		-
+			message: '#^Method App\\Models\\Permission\:\:roles\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^Method App\\Models\\Program\:\:graduates\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Program.php
+
+		-
+			message: '#^Method App\\Models\\Program\:\:institution\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Program.php
+
+		-
+			message: '#^Method App\\Models\\Role\:\:permissions\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^Method App\\Models\\Role\:\:users\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:permissionNames\(\) should return list\<string\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:permissionNames\(\) should return list\<string\> but returns array\<int, mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:role\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Property App\\Models\\User\:\:\$permissionCache type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$institution_code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$institution_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Method App\\Services\\CatalogSyncService\:\:insertPrograms\(\) has parameter \$records with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Method App\\Services\\CatalogSyncService\:\:serialize\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:all\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/CatalogSyncService.php
+
+		-
+			message: '#^Method App\\Services\\GraduateData\:\:indexes\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/GraduateData.php
+
+		-
+			message: '#^Method App\\Services\\GraduateData\:\:indexes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/GraduateData.php
+
+		-
+			message: '#^Parameter \#2 \$data of function hash expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/GraduateData.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\GraduateImportChunk\:\:\$invalid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\GraduateImportChunk\:\:\$skipped\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$end_row\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$error\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$start_row\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Method App\\Services\\GraduateImportService\:\:serialize\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Parameter \#1 \$chunk of method App\\Services\\GraduateImportService\:\:dispatch\(\) expects App\\Models\\GraduateImportChunk, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:all\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>created_at" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/GraduateImportService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:fallback\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:fetchAllHEI\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:fetchMajors\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:fetchProgramRecords\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:fetchPrograms\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:normalize\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:programSnapshot\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:programSnapshot\(\) should return array\{data\: array, last_fetched_at\: string\|null, stale\: bool, error\: string\|null\} but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:schoolSnapshot\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:schoolSnapshot\(\) should return array\{data\: array, last_fetched_at\: string\|null, stale\: bool, error\: string\|null\} but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\PortalService\:\:snapshot\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PortalService.php
+
+		-
+			message: '#^Method App\\Services\\ProgramPresenter\:\:map\(\) has parameter \$records with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ProgramPresenter.php
+
+		-
+			message: '#^Method App\\Services\\ProgramPresenter\:\:map\(\) has parameter \$school with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ProgramPresenter.php
+
+		-
+			message: '#^Method App\\Services\\ProgramPresenter\:\:map\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ProgramPresenter.php
+
+		-
+			message: '#^Method App\\Services\\SoaisReader\:\:metadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SoaisReader.php
+
+		-
+			message: '#^Method App\\Services\\SoaisReader\:\:normalize\(\) has parameter \$row with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SoaisReader.php
+
+		-
+			message: '#^Method App\\Services\\SoaisReader\:\:normalize\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SoaisReader.php
+
+		-
+			message: '#^Method App\\Services\\SoaisReader\:\:rows\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SoaisReader.php
+
+		-
+			message: '#^Method App\\Services\\SoaisReader\:\:validateHeaders\(\) has parameter \$rows with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SoaisReader.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SoaisReader.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fgets expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SoaisReader.php
+
+		-
+			message: '#^Cannot access offset ''size'' on array\{name\: string, index\: int, crc\: int, size\: int, mtime\: int, comp_size\: int, comp_method\: int, encryption_method\: int\}\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Cannot access offset 1 on array\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Method App\\Services\\SoaisXlsxStream\:\:prepare\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Method App\\Services\\SoaisXlsxStream\:\:prepareWorkbook\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Method App\\Services\\SoaisXlsxStream\:\:rows\(\) has parameter \$index with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Method App\\Services\\SoaisXlsxStream\:\:rows\(\) has parameter \$strings with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Parameter \#1 \$string of function strlen expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Parameter \#1 \$text of method App\\Services\\SoaisXlsxStream\:\:xml\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Parameter \#2 \$string of function unpack expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/SoaisXlsxStream.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/SoaisXlsxStream.php

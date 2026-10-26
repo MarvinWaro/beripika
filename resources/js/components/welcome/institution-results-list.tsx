@@ -42,8 +42,10 @@ export default function InstitutionResultsList({
         <div className="mx-auto max-w-full">
             <div className="flex flex-col gap-2">
                 {institutions.map((institution, keyIndex) => {
-                    const isSelected = expandedInstitutionCode === institution.code;
-                    const isLoadingPrograms = programsLoading[institution.code] === true;
+                    const isSelected =
+                        expandedInstitutionCode === institution.code;
+                    const isLoadingPrograms =
+                        programsLoading[institution.code] === true;
 
                     // UPDATED LOGIC:
                     // Removed the "programs loaded" count check.
@@ -56,16 +58,18 @@ export default function InstitutionResultsList({
                     return (
                         <Card
                             key={`${institution.code}-${keyIndex}`}
-                            className={`py-0 group border border-dashed shadow-sm transition-all hover:shadow-md ${
+                            className={`group border border-dashed py-0 shadow-sm transition-all hover:shadow-md ${
                                 isSelected
                                     ? 'border-emerald-300 bg-emerald-100 dark:border-emerald-600 dark:bg-emerald-900/40'
-                                    : 'bg-white/95 border-gray-200 dark:bg-gray-900/90 dark:border-gray-700'
+                                    : 'border-gray-200 bg-white/95 dark:border-gray-700 dark:bg-gray-900/90'
                             }`}
                         >
                             <CardContent className="px-4 py-3">
                                 <button
                                     type="button"
-                                    onClick={() => onToggleInstitution(institution)}
+                                    onClick={() =>
+                                        onToggleInstitution(institution)
+                                    }
                                     className="flex w-full items-center justify-between gap-3 text-left"
                                     aria-pressed={isSelected}
                                 >
@@ -76,7 +80,7 @@ export default function InstitutionResultsList({
 
                                         <div className="min-w-0 flex-1">
                                             <h3
-                                                className={`text-sm font-semibold leading-snug break-words ${
+                                                className={`text-sm leading-snug font-semibold break-words ${
                                                     isSelected
                                                         ? 'text-gray-900 dark:text-emerald-50'
                                                         : 'text-gray-900 dark:text-white'
@@ -95,13 +99,15 @@ export default function InstitutionResultsList({
 
                                                 <Badge
                                                     variant={
-                                                        institution.type === 'public'
+                                                        institution.type ===
+                                                        'public'
                                                             ? 'default'
                                                             : 'secondary'
                                                     }
                                                     className="px-2 py-0.5 text-[11px] font-medium dark:bg-gray-800 dark:text-gray-100"
                                                 >
-                                                    {institution.type === 'public'
+                                                    {institution.type ===
+                                                    'public'
                                                         ? 'Public Institution'
                                                         : 'Private Institution'}
                                                 </Badge>
@@ -109,9 +115,13 @@ export default function InstitutionResultsList({
 
                                             {/* Helper text section: Only rendered if loading */}
                                             {helperText && (
-                                                <div className={`mt-1 flex items-center gap-1 text-[11px] ${
-                                                    isSelected ? 'text-gray-700 dark:text-emerald-200/80' : 'text-gray-500 dark:text-gray-400'
-                                                }`}>
+                                                <div
+                                                    className={`mt-1 flex items-center gap-1 text-[11px] ${
+                                                        isSelected
+                                                            ? 'text-gray-700 dark:text-emerald-200/80'
+                                                            : 'text-gray-500 dark:text-gray-400'
+                                                    }`}
+                                                >
                                                     <svg
                                                         className="h-3 w-3 flex-shrink-0 animate-spin"
                                                         fill="none"
@@ -133,7 +143,9 @@ export default function InstitutionResultsList({
 
                                     <ChevronDown
                                         className={`h-4 w-4 flex-shrink-0 transition-transform ${
-                                            isSelected ? 'rotate-180 text-gray-600 dark:text-emerald-200' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500'
+                                            isSelected
+                                                ? 'rotate-180 text-gray-600 dark:text-emerald-200'
+                                                : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-500'
                                         }`}
                                     />
                                 </button>

@@ -29,22 +29,52 @@ const navGroups: { title: string; items: GuardedNavItem[] }[] = [
     {
         title: 'Overview',
         items: [
-            { title: 'Dashboard', href: dashboard(), icon: LayoutGrid, permission: 'view_dashboard' },
+            {
+                title: 'Dashboard',
+                href: dashboard(),
+                icon: LayoutGrid,
+                permission: 'view_dashboard',
+            },
         ],
     },
     {
         title: 'Records',
         items: [
-            { title: 'Institutions', href: '/institutions', icon: Building2, permission: 'view_institutions' },
-            { title: 'Programs', href: '/programs', icon: FileText, permission: 'view_programs' },
-            { title: 'Program Catalog', href: '/programs/catalog', icon: ListChecks, permission: 'view_programs' },
-            { title: 'Graduates', href: '/graduates', icon: GraduationCap, permission: 'view_graduates' },
+            {
+                title: 'Institutions',
+                href: '/institutions',
+                icon: Building2,
+                permission: 'view_institutions',
+            },
+            {
+                title: 'Programs',
+                href: '/programs',
+                icon: FileText,
+                permission: 'view_programs',
+            },
+            {
+                title: 'Program Catalog',
+                href: '/programs/catalog',
+                icon: ListChecks,
+                permission: 'view_programs',
+            },
+            {
+                title: 'Graduates',
+                href: '/graduates',
+                icon: GraduationCap,
+                permission: 'view_graduates',
+            },
         ],
     },
     {
         title: 'Administration',
         items: [
-            { title: 'Concerns', href: '/concerns', icon: MessageSquareWarning, permission: 'view_concerns' },
+            {
+                title: 'Concerns',
+                href: '/concerns',
+                icon: MessageSquareWarning,
+                permission: 'view_concerns',
+            },
             // Users, Roles & Permissions and Activity Logs live under Settings (layouts/settings/layout.tsx).
         ],
     },
@@ -53,7 +83,10 @@ const navGroups: { title: string; items: GuardedNavItem[] }[] = [
 export function AppSidebar() {
     const { can } = usePermissions();
     const groups = navGroups
-        .map((group) => ({ ...group, items: group.items.filter((item) => can(item.permission)) }))
+        .map((group) => ({
+            ...group,
+            items: group.items.filter((item) => can(item.permission)),
+        }))
         .filter((group) => group.items.length > 0);
 
     return (
@@ -72,7 +105,11 @@ export function AppSidebar() {
 
             <SidebarContent>
                 {groups.map((group) => (
-                    <NavMain key={group.title} title={group.title} items={group.items} />
+                    <NavMain
+                        key={group.title}
+                        title={group.title}
+                        items={group.items}
+                    />
                 ))}
             </SidebarContent>
 

@@ -11,7 +11,12 @@ type CanProps = {
     children: ReactNode;
 };
 
-export function Can({ permission, all = false, fallback = null, children }: CanProps) {
+export function Can({
+    permission,
+    all = false,
+    fallback = null,
+    children,
+}: CanProps) {
     const { canAny, canAll } = usePermissions();
     const list = Array.isArray(permission) ? permission : [permission];
     const allowed = all ? canAll(...list) : canAny(...list);

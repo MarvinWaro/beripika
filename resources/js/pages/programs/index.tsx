@@ -506,7 +506,8 @@ function ProgramBrowser({
                                                                     </Button>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>
-                                                                    View students
+                                                                    View
+                                                                    students
                                                                 </TooltipContent>
                                                             </Tooltip>
                                                         )}
@@ -628,7 +629,7 @@ function ProgramBrowser({
 
 ProgramIndex.layout = {
     breadcrumbs: [
-                { title: 'Dashboard', href: '/dashboard' },
-                { title: 'Programs', href: '/programs' },
-            ],
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Programs', href: '/programs' },
+    ],
 };

@@ -1,6 +1,9 @@
 includes:
     - vendor/larastan/larastan/extension.neon
     - vendor/nesbot/carbon/extension.neon
+    # Pre-existing errors (183 on 2026-10-26), frozen so CI fails only on new ones.
+    # Fix a file, then regenerate: vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon
+    - phpstan-baseline.neon
 
 parameters:
     paths:

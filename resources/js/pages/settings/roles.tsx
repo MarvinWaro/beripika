@@ -88,7 +88,9 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
     const [confirmDelete, setConfirmDelete] = useState<Role | null>(null);
 
     const selected =
-        selectedId === 'new' ? null : roles.find((r) => r.id === selectedId) ?? null;
+        selectedId === 'new'
+            ? null
+            : (roles.find((r) => r.id === selectedId) ?? null);
     const locked = selected?.is_system ?? false;
     const totalPermissions = permissionGroups.reduce(
         (sum, g) => sum + g.permissions.length,
@@ -99,7 +101,8 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
 
     const selectRole = (id: number | 'new') => {
         setSelectedId(id);
-        const role = id === 'new' ? null : roles.find((r) => r.id === id) ?? null;
+        const role =
+            id === 'new' ? null : (roles.find((r) => r.id === id) ?? null);
         form.setData(toForm(role));
         form.clearErrors();
     };
@@ -160,8 +163,8 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                             Roles &amp; Permissions
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Decide what each role can see and do. Changes apply on the
-                            user&apos;s next page load.
+                            Decide what each role can see and do. Changes apply
+                            on the user&apos;s next page load.
                         </p>
                     </div>
                     <Button onClick={() => selectRole('new')}>
@@ -173,7 +176,9 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                 <Tabs defaultValue="edit" className="gap-4">
                     <TabsList>
                         <TabsTrigger value="edit">Edit roles</TabsTrigger>
-                        <TabsTrigger value="matrix">Permission matrix</TabsTrigger>
+                        <TabsTrigger value="matrix">
+                            Permission matrix
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="edit">
@@ -206,7 +211,8 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                             </span>
                                             <span className="flex items-center gap-1">
                                                 <ShieldCheck className="size-3" />
-                                                {role.permissions.length}/{totalPermissions}
+                                                {role.permissions.length}/
+                                                {totalPermissions}
                                             </span>
                                         </div>
                                     </button>
@@ -224,7 +230,9 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                     <CardHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
                                         <div className="space-y-1">
                                             <CardTitle className="flex items-center gap-2">
-                                                {selected ? selected.display_name : 'New role'}
+                                                {selected
+                                                    ? selected.display_name
+                                                    : 'New role'}
                                                 {locked && (
                                                     <Badge variant="secondary">
                                                         <Lock className="size-3" />
@@ -248,7 +256,9 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                                         router.post(
                                                             `/roles/${selected.id}/duplicate`,
                                                             {},
-                                                            { preserveScroll: true },
+                                                            {
+                                                                preserveScroll: true,
+                                                            },
                                                         )
                                                     }
                                                 >
@@ -261,13 +271,21 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                                         variant="outline"
                                                         size="sm"
                                                         className="text-destructive"
-                                                        disabled={selected.users_count > 0}
+                                                        disabled={
+                                                            selected.users_count >
+                                                            0
+                                                        }
                                                         title={
-                                                            selected.users_count > 0
+                                                            selected.users_count >
+                                                            0
                                                                 ? 'Move its users to another role first'
                                                                 : undefined
                                                         }
-                                                        onClick={() => setConfirmDelete(selected)}
+                                                        onClick={() =>
+                                                            setConfirmDelete(
+                                                                selected,
+                                                            )
+                                                        }
                                                     >
                                                         <Trash2 className="size-4" />
                                                         Delete
@@ -280,42 +298,69 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                     <CardContent className="space-y-6">
                                         <div className="grid gap-4 sm:grid-cols-2">
                                             <div className="grid gap-2">
-                                                <Label htmlFor="display_name">Role name</Label>
+                                                <Label htmlFor="display_name">
+                                                    Role name
+                                                </Label>
                                                 <Input
                                                     id="display_name"
-                                                    value={form.data.display_name}
+                                                    value={
+                                                        form.data.display_name
+                                                    }
                                                     disabled={locked}
                                                     placeholder="e.g. PRC Verifier"
                                                     onChange={(e) =>
-                                                        form.setData('display_name', e.target.value)
+                                                        form.setData(
+                                                            'display_name',
+                                                            e.target.value,
+                                                        )
                                                     }
                                                     required
                                                 />
                                                 <InputError
-                                                    message={form.errors.display_name || form.errors.name}
+                                                    message={
+                                                        form.errors
+                                                            .display_name ||
+                                                        form.errors.name
+                                                    }
                                                 />
                                             </div>
                                             <div className="grid gap-2">
-                                                <Label htmlFor="description">Description</Label>
+                                                <Label htmlFor="description">
+                                                    Description
+                                                </Label>
                                                 <Textarea
                                                     id="description"
                                                     rows={1}
-                                                    value={form.data.description}
+                                                    value={
+                                                        form.data.description
+                                                    }
                                                     disabled={locked}
                                                     placeholder="Who gets this role?"
                                                     onChange={(e) =>
-                                                        form.setData('description', e.target.value)
+                                                        form.setData(
+                                                            'description',
+                                                            e.target.value,
+                                                        )
                                                     }
                                                 />
-                                                <InputError message={form.errors.description} />
+                                                <InputError
+                                                    message={
+                                                        form.errors.description
+                                                    }
+                                                />
                                             </div>
                                         </div>
 
                                         <div className="grid gap-4 md:grid-cols-2">
                                             {permissionGroups.map((group) => {
-                                                const ids = group.permissions.map((p) => p.id);
+                                                const ids =
+                                                    group.permissions.map(
+                                                        (p) => p.id,
+                                                    );
                                                 const count = ids.filter((id) =>
-                                                    form.data.permissions.includes(id),
+                                                    form.data.permissions.includes(
+                                                        id,
+                                                    ),
                                                 ).length;
                                                 const state =
                                                     count === 0
@@ -334,49 +379,82 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                                                 {group.label}
                                                             </span>
                                                             <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                                {count}/{ids.length}
+                                                                {count}/
+                                                                {ids.length}
                                                                 <Checkbox
-                                                                    checked={state}
-                                                                    disabled={locked}
-                                                                    onCheckedChange={(v) =>
-                                                                        toggleGroup(group, v === true)
+                                                                    checked={
+                                                                        state
+                                                                    }
+                                                                    disabled={
+                                                                        locked
+                                                                    }
+                                                                    onCheckedChange={(
+                                                                        v,
+                                                                    ) =>
+                                                                        toggleGroup(
+                                                                            group,
+                                                                            v ===
+                                                                                true,
+                                                                        )
                                                                     }
                                                                     aria-label={`Select all ${group.label}`}
                                                                 />
                                                             </span>
                                                         </label>
                                                         <div className="divide-y">
-                                                            {group.permissions.map((permission) => (
-                                                                <label
-                                                                    key={permission.id}
-                                                                    className="flex cursor-pointer items-start gap-3 px-4 py-2.5 hover:bg-muted/30"
-                                                                >
-                                                                    <Checkbox
-                                                                        className="mt-0.5"
-                                                                        checked={form.data.permissions.includes(permission.id)}
-                                                                        disabled={locked}
-                                                                        onCheckedChange={(v) =>
-                                                                            toggle(permission.id, v === true)
+                                                            {group.permissions.map(
+                                                                (
+                                                                    permission,
+                                                                ) => (
+                                                                    <label
+                                                                        key={
+                                                                            permission.id
                                                                         }
-                                                                    />
-                                                                    <span className="grid gap-0.5">
-                                                                        <span className="text-sm font-medium">
-                                                                            {permission.display_name}
-                                                                        </span>
-                                                                        {permission.description && (
-                                                                            <span className="text-xs text-muted-foreground">
-                                                                                {permission.description}
+                                                                        className="flex cursor-pointer items-start gap-3 px-4 py-2.5 hover:bg-muted/30"
+                                                                    >
+                                                                        <Checkbox
+                                                                            className="mt-0.5"
+                                                                            checked={form.data.permissions.includes(
+                                                                                permission.id,
+                                                                            )}
+                                                                            disabled={
+                                                                                locked
+                                                                            }
+                                                                            onCheckedChange={(
+                                                                                v,
+                                                                            ) =>
+                                                                                toggle(
+                                                                                    permission.id,
+                                                                                    v ===
+                                                                                        true,
+                                                                                )
+                                                                            }
+                                                                        />
+                                                                        <span className="grid gap-0.5">
+                                                                            <span className="text-sm font-medium">
+                                                                                {
+                                                                                    permission.display_name
+                                                                                }
                                                                             </span>
-                                                                        )}
-                                                                    </span>
-                                                                </label>
-                                                            ))}
+                                                                            {permission.description && (
+                                                                                <span className="text-xs text-muted-foreground">
+                                                                                    {
+                                                                                        permission.description
+                                                                                    }
+                                                                                </span>
+                                                                            )}
+                                                                        </span>
+                                                                    </label>
+                                                                ),
+                                                            )}
                                                         </div>
                                                     </div>
                                                 );
                                             })}
                                         </div>
-                                        <InputError message={form.errors.permissions} />
+                                        <InputError
+                                            message={form.errors.permissions}
+                                        />
 
                                         {!locked && (
                                             <div className="flex items-center justify-end gap-2 border-t pt-4">
@@ -384,17 +462,26 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                                     <Button
                                                         type="button"
                                                         variant="ghost"
-                                                        onClick={() => selectRole(selectedId)}
+                                                        onClick={() =>
+                                                            selectRole(
+                                                                selectedId,
+                                                            )
+                                                        }
                                                     >
                                                         Discard changes
                                                     </Button>
                                                 )}
                                                 <Button
                                                     type="submit"
-                                                    disabled={form.processing || (!dirty && !!selected)}
+                                                    disabled={
+                                                        form.processing ||
+                                                        (!dirty && !!selected)
+                                                    }
                                                 >
                                                     <Save className="size-4" />
-                                                    {selected ? 'Save changes' : 'Create role'}
+                                                    {selected
+                                                        ? 'Save changes'
+                                                        : 'Create role'}
                                                 </Button>
                                             </div>
                                         )}
@@ -449,8 +536,8 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                             Delete {confirmDelete?.display_name}?
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            This removes the role and its permission settings. This cannot
-                            be undone.
+                            This removes the role and its permission settings.
+                            This cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -461,7 +548,13 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
                                 if (!confirmDelete) return;
                                 router.delete(`/roles/${confirmDelete.id}`, {
                                     preserveScroll: true,
-                                    onSuccess: () => selectRole(roles.find((r) => r.id !== confirmDelete.id)?.id ?? 'new'),
+                                    onSuccess: () =>
+                                        selectRole(
+                                            roles.find(
+                                                (r) =>
+                                                    r.id !== confirmDelete.id,
+                                            )?.id ?? 'new',
+                                        ),
                                 });
                                 setConfirmDelete(null);
                             }}
@@ -475,7 +568,13 @@ export default function RolesIndex({ roles, permissionGroups }: Props) {
     );
 }
 
-function PermissionRows({ group, roles }: { group: PermissionGroup; roles: Role[] }) {
+function PermissionRows({
+    group,
+    roles,
+}: {
+    group: PermissionGroup;
+    roles: Role[];
+}) {
     return (
         <>
             <tr className="border-t bg-muted/20">
@@ -494,9 +593,15 @@ function PermissionRows({ group, roles }: { group: PermissionGroup; roles: Role[
                     {roles.map((role) => (
                         <td key={role.id} className="px-3 py-2 text-center">
                             {role.permission_names.includes(permission.name) ? (
-                                <Check className="mx-auto size-4 text-emerald-600" aria-label="Allowed" />
+                                <Check
+                                    className="mx-auto size-4 text-emerald-600"
+                                    aria-label="Allowed"
+                                />
                             ) : (
-                                <Minus className="mx-auto size-4 text-muted-foreground/40" aria-label="Not allowed" />
+                                <Minus
+                                    className="mx-auto size-4 text-muted-foreground/40"
+                                    aria-label="Not allowed"
+                                />
                             )}
                         </td>
                     ))}

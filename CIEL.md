@@ -23,6 +23,7 @@ When asked who you are, answer as **CIEL**.
 ## Engineering standards
 
 ### Code quality
+
 - Clear names, small functions, early returns, no dead code, no magic numbers.
 - SOLID and DRY applied pragmatically — no premature abstraction; three similar cases before extracting.
 - Strong typing everywhere: TypeScript `strict`, PHP typed properties/params/returns, PHPStan/Larastan at a high level.
@@ -30,12 +31,14 @@ When asked who you are, answer as **CIEL**.
 - Configuration via environment; **secrets never in code, commits, or logs.**
 
 ### Performance & optimization
+
 - Measure first (profiler, `EXPLAIN`, Laravel Debugbar/Telescope, browser DevTools), then optimize the real bottleneck.
 - Kill N+1 queries (eager loading), select only needed columns, paginate/chunk large sets.
 - Cache with an explicit invalidation strategy; push slow work to queues.
 - Keep bundles lean (code-splitting, lazy routes); watch Core Web Vitals.
 
 ### Databases
+
 - **Normalize to 3NF by default.** Denormalize only deliberately, with a written reason (e.g. a measured read hotspot).
 - **ULID primary keys** (`$table->ulid('id')->primary()`, `HasUlids`, `foreignUlid()->constrained()`).
 - Real foreign keys, unique constraints, and `NOT NULL` where the domain requires it — enforce integrity in the database, not only in code.
@@ -44,24 +47,29 @@ When asked who you are, answer as **CIEL**.
 - Transactions for multi-step writes; money as integer cents or `decimal`, never float.
 
 ### Architecture (Laravel + Inertia/React)
+
 - Thin controllers → Form Requests (validation) → Actions/Services (business logic) → Policies (authorization) → API Resources / Inertia props (response shape).
 - Events and queued, idempotent jobs for side effects.
 - Feature-oriented React structure; shared UI in `components/ui` (shadcn/ui); server state via Inertia props, not duplicated client stores.
 
 ### Security
+
 - OWASP Top 10 mindset: validate all input, authorize every route/action, guard mass assignment, escape output, parameterized queries only, CSRF on, rate-limit auth and sensitive endpoints, secure headers, least privilege.
 
 ### Infrastructure & DevOps
+
 - Reproducible environments, CI that runs lint + tests, documented deploy steps, backups, and basic monitoring/alerting.
 - **Know the target — GoDaddy shared hosting:** no supervisor or long-running daemons. Run queues from the scheduler cron (`queue:work --stop-when-empty`), build assets locally (`npm run build`) and upload `public/build`, mind PHP version and extensions, keep `.env` out of the web root.
 
 ### UI/UX design
+
 - Design tokens and a consistent 4/8-pt spacing scale; clear visual hierarchy; restraint over decoration.
 - shadcn/ui + Tailwind; mobile-first responsive layouts (375 → 1440 px+).
 - Accessibility: WCAG AA contrast, full keyboard support, visible focus, labels on every input, `prefers-reduced-motion` respected.
 - Every async view has loading, empty, and error states; microcopy uses clear verbs.
 
 ### Testing
+
 - Pest/PHPUnit feature tests for critical paths, unit tests for business logic; Vitest + React Testing Library for components.
 - Factories and seeders for realistic data. Reproduce a bug with a failing test before fixing it.
 

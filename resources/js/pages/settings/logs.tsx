@@ -87,17 +87,22 @@ export default function LogsIndex({ logs }: Props) {
                     <CardHeader>
                         <CardTitle>Activity Logs</CardTitle>
                         <CardDescription>
-                            See who imported, edited, deleted, or looked up graduates and when.
+                            See who imported, edited, deleted, or looked up
+                            graduates and when.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="rounded-md border overflow-x-auto">
+                        <div className="overflow-x-auto rounded-md border">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-48">Date &amp; Time</TableHead>
+                                        <TableHead className="w-48">
+                                            Date &amp; Time
+                                        </TableHead>
                                         <TableHead>User</TableHead>
-                                        <TableHead className="w-40">Action</TableHead>
+                                        <TableHead className="w-40">
+                                            Action
+                                        </TableHead>
                                         <TableHead>Details</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -113,14 +118,18 @@ export default function LogsIndex({ logs }: Props) {
                                         </TableRow>
                                     ) : (
                                         logs.data.map((log) => (
-                                            <TableRow key={log.id} className="hover:bg-muted/50">
+                                            <TableRow
+                                                key={log.id}
+                                                className="hover:bg-muted/50"
+                                            >
                                                 <TableCell className="text-sm text-muted-foreground">
                                                     {log.created_at}
                                                 </TableCell>
                                                 <TableCell className="text-sm">
                                                     <div className="flex flex-col">
                                                         <span className="font-medium">
-                                                            {log.user_name ?? 'System'}
+                                                            {log.user_name ??
+                                                                'System'}
                                                         </span>
                                                         {log.user_email && (
                                                             <span className="text-xs text-muted-foreground">
@@ -131,9 +140,13 @@ export default function LogsIndex({ logs }: Props) {
                                                 </TableCell>
                                                 <TableCell>
                                                     <Badge
-                                                        className={getActionColor(log.action)}
+                                                        className={getActionColor(
+                                                            log.action,
+                                                        )}
                                                     >
-                                                        {formatAction(log.action)}
+                                                        {formatAction(
+                                                            log.action,
+                                                        )}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="text-sm">
@@ -157,15 +170,23 @@ export default function LogsIndex({ logs }: Props) {
                                     return (
                                         <Button
                                             key={idx}
-                                            variant={link.active ? 'default' : 'outline'}
+                                            variant={
+                                                link.active
+                                                    ? 'default'
+                                                    : 'outline'
+                                            }
                                             size="sm"
                                             disabled={!link.url}
                                             onClick={() => {
                                                 if (!link.url) return;
-                                                router.get(link.url, {}, {
-                                                    preserveScroll: true,
-                                                    preserveState: true,
-                                                });
+                                                router.get(
+                                                    link.url,
+                                                    {},
+                                                    {
+                                                        preserveScroll: true,
+                                                        preserveState: true,
+                                                    },
+                                                );
                                             }}
                                         >
                                             {label}
