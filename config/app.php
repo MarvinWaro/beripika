@@ -123,4 +123,20 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | First Super Administrator
+    |--------------------------------------------------------------------------
+    |
+    | Account created by DatabaseSeeder. Read through config (not env()) so
+    | seeding still works when the configuration is cached in production.
+    |
+    */
+
+    'admin' => [
+        'email' => env('ADMIN_EMAIL', 'chedro12hemis@ched.gov.ph'),
+        'name' => env('ADMIN_NAME', 'CHED Administrator'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
+
 ];

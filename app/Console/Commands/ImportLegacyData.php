@@ -44,7 +44,7 @@ class ImportLegacyData extends Command
         $tables = $this->option('only') ?: self::ORDER;
 
         if (! $this->option('force')) {
-            $busy = collect($tables)->filter(fn ($t) => DB::table($t)->when($t === 'users', fn ($q) => $q->whereNotIn('email', [env('ADMIN_EMAIL', 'chedro12hemis@ched.gov.ph')]))->exists());
+            $busy = collect($tables)->filter(fn ($t) => DB::table($t)->when($t === 'users', fn ($q) => $q->whereNotIn('email', [config('app.admin.email')]))->exists());
             if ($busy->isNotEmpty()) {
                 $this->error('Target tables already have data: '.$busy->implode(', ').'. Use --force to merge (existing IDs are skipped).');
 
