@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\ActivityLog;
-use App\Models\Concern;
 use App\Models\Graduate;
 use App\Models\ProgramCatalog;
 use App\Models\User;
@@ -91,41 +89,41 @@ test('provinces beyond the top eight fold into Other', function () {
         ->where('chartData.provinces.8.label', 'Other'));
 });
 
-test('board share and data quality follow the catalog and the portal', function () {
+test('board share follows the program catalog', function () {
     $this->get('/dashboard')->assertInertia(fn ($page) => $page
-        ->where('chartData.programTypes', [['label' => 'Board', 'count' => 5], ['label' => 'Unclassified', 'count' => 1]])
-        ->where('quality', fn ($checks) => collect($checks)->pluck('count', 'key')->all() === [
-            'sex' => 1, 'psced' => 6, 'academic_year' => 6, 'hei' => 1, 'catalog' => 1,
-        ]));
+        ->where('chartData.programTypes', [['label' => 'Board', 'count' => 5], ['label' => 'Unclassified', 'count' => 1]]));
 });
 
-test('operations sections follow permissions', function (string $role, array $present) {
-    Concern::create(['institution_code' => '12001', 'school' => 'Alpha', 'program' => 'BS IT', 'concern' => 'Test', 'status' => 'pending']);
-    ActivityLog::record('graduate_view', 'Viewed graduate', userId: null);
-    $this->actingAs(User::factory()->withRole($role)->create());
+test('data quality counts each gap and breaks it down by where it comes from', function () {
+    $this->get('/dashboard')->assertInertia(fn ($page) => $page
+        ->where('quality', fn ($checks) => collect($checks)->pluck('count', 'key')->all() === [
+            'sex' => 1, 'psced' => 6, 'academic_year' => 6, 'hei' => 1, 'catalog' => 1,
+        ])
+        // Missing values are grouped by institution, largest first; unknown codes keep their code.
+        ->where('quality.1.dimension', 'Institution')
+        ->where('quality.1.breakdown', [
+            ['label' => 'Alpha State College', 'count' => 2],
+            ['label' => 'Beta College', 'count' => 2],
+            ['label' => 'Gamma City College', 'count' => 1],
+            ['label' => 'HEI 12099', 'count' => 1],
+        ])
+        ->where('quality.0.breakdown', [['label' => 'Gamma City College', 'count' => 1]])
+        ->where('quality.3.breakdown', [['label' => 'HEI 12099', 'count' => 1]])
+        ->where('quality.4.dimension', 'Program')
+        ->where('quality.4.breakdown', [['label' => 'BS NURSING', 'count' => 1]])
+        ->where('quality.1.more', 0));
+});
 
-    $this->get('/dashboard')->assertOk()->assertInertia(function ($page) use ($present) {
-        foreach (['concerns', 'imports', 'lookups'] as $section) {
-            in_array($section, $present, true)
-                ? $page->whereNot("operations.{$section}", null)
-                : $page->where("operations.{$section}", null);
-        }
-    });
-})->with([
-    'admin sees everything' => ['admin', ['concerns', 'imports', 'lookups']],
-    'records staff sees concerns and imports' => ['staff', ['concerns', 'imports']],
-    'PRC sees no operations' => ['verifier', []],
-    'viewer sees no operations' => ['viewer', []],
-]);
-
-test('operations counts concerns by status and lookups per month', function () {
-    Concern::create(['institution_code' => '12001', 'school' => 'Alpha', 'program' => 'BS IT', 'concern' => 'Test', 'status' => 'pending']);
-    ActivityLog::record('graduate_view', 'Viewed graduate', userId: null);
-    ActivityLog::record('graduate_search', 'Searched graduates', userId: null);
+test('breakdowns show the ten largest groups and count the rest', function () {
+    foreach (range(1, 12) as $i) {
+        makeGraduate("Q-{$i}", (string) (14000 + $i), '2024-06-01', 'FEMALE');
+    }
 
     $this->get('/dashboard')->assertInertia(fn ($page) => $page
-        ->where('operations.concerns.0', ['status' => 'pending', 'label' => 'Pending', 'count' => 1])
-        ->has('operations.lookups', 6)
-        ->where('operations.lookups.5.views', 1)
-        ->where('operations.lookups.5.searches', 1));
+        ->has('quality.1.breakdown', 10)
+        ->where('quality.1.more', 6));
+});
+
+test('the operations panel is no longer sent to the dashboard', function () {
+    $this->get('/dashboard')->assertOk()->assertInertia(fn ($page) => $page->missing('operations'));
 });

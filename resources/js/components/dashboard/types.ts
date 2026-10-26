@@ -1,4 +1,4 @@
-/** Props of the dashboard page, mirrored from App\Services\DashboardAnalytics and DashboardOperations. */
+/** Props of the dashboard page, mirrored from App\Services\DashboardAnalytics. */
 
 export type Point = { label: string; count: number };
 
@@ -34,7 +34,14 @@ export interface DashboardChartData {
 export interface QualityCheck {
     key: string;
     label: string;
+    /** What the breakdown groups by, e.g. "Institution" or "Program". */
+    dimension: string;
+    /** null when the check cannot be measured yet. */
     count: number | null;
+    /** Largest groups first, capped server-side. */
+    breakdown: Point[];
+    /** Groups left out of the breakdown. */
+    more: number;
 }
 
 export interface DashboardFilters {
@@ -45,23 +52,6 @@ export interface DashboardFilters {
 export interface DashboardOptions {
     years: number[];
     institutions: { code: string; name: string }[];
-}
-
-export interface ImportSummary {
-    id: number;
-    filename: string;
-    status: string;
-    created_at: string;
-    counts: Record<
-        'created' | 'updated' | 'unchanged' | 'skipped' | 'invalid',
-        number
-    >;
-}
-
-export interface DashboardOperations {
-    concerns: { status: string; label: string; count: number }[] | null;
-    imports: ImportSummary[] | null;
-    lookups: { label: string; views: number; searches: number }[] | null;
 }
 
 export const formatNumber = (value: number) => value.toLocaleString();
